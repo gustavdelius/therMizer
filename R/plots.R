@@ -13,16 +13,25 @@ therTheme <- function(){
   )
 }
 
-#' @title plot thermal performance.
+#' Plot thermal performance curves
 #'
-#' @description Take a look at the thermal performance of the species.
+#' Plot the encounter and metabolic temperature response curves implied by the
+#' species-level thermal parameters stored in \code{params}.
 #'
-#' @inheritParams upgradeTherParams
+#' @param params A therMizer-enabled \linkS4class{MizerParams} object
+#'   containing species thermal limits and derived scaling parameters.
 #'
-#' @param return_data Boolean value allowing to return the data frame used for
-#' the plot instead of the plot itself. Default is FALSE.
-#' @param resolution Numeric value which determines the step-width between each
-#' calculation of the species' thermal performance. Default is 0.2.
+#' @param return_data Logical. If \code{TRUE}, return the long-format data frame
+#'   used to build the plot instead of a \code{ggplot2} object. Default is
+#'   \code{FALSE}.
+#' @param resolution Numeric step size, in degrees C, between temperature values
+#'   used to evaluate the curves. Default is \code{0.2}.
+#'
+#' @returns Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+#'   data frame with columns \code{temperature}, \code{Species},
+#'   \code{scalar}, and \code{Type}.
+#'
+#' @seealso \code{\link{plotTherScalar}()}.
 #'
 #' @export
 
@@ -110,18 +119,26 @@ plotTherPerformance <- function(params, resolution = .2, return_data = FALSE){
 }
 
 
-#' @title plotTherScalar
+#' Plot time-varying thermal scalars
 #'
-#' @description Plot the scalar value affecting the encounter rate and metabolsim
-#' of each species throughout the provided temperature in ocean_temp_array.
+#' Plot the encounter and metabolism scalars experienced by each species
+#' through time based on the temperature forcing stored in
+#' \code{other_params(params)$ocean_temp}.
 #'
 #' @inheritParams plotTherPerformance
 #'
-#' @param species A character string. Select of specific species to display. It
-#' has to correspond to one of the species name in the mizerParams object.
-#' Default is NULL.
-#' @param species_panel Boolean value. If set to TRUE, the plot will be a panel
-#' of the species. Disabled if the argument species is not NULL. Default is TRUE.
+#' @param species Optional character string giving a single species name to
+#'   display. It must match one of the species names in \code{params}. Default
+#'   is \code{NULL}, which keeps all species.
+#' @param species_panel Logical. If \code{TRUE} and \code{species} is
+#'   \code{NULL}, plot each species in a separate panel. Ignored when
+#'   \code{species} is supplied. Default is \code{TRUE}.
+#'
+#' @returns Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+#'   data frame with columns \code{Time}, \code{Species}, \code{Scalar}, and
+#'   \code{Type}.
+#'
+#' @seealso \code{\link{plotTherPerformance}()}.
 #'
 #' @export
 

@@ -1,10 +1,19 @@
-#' Vertical integration functions
-
-#' @title Add realms to params object.
+#' Add realm-specific temperature structure to a therMizer model
 #'
-#' @description set different species specific realms with different temperatures
+#' Store vertical migration and exposure information in a
+#' \code{MizerParams} object so temperature effects can be combined across
+#' multiple realms.
 #'
 #' @inheritParams upgradeTherParams
+#'
+#' @details If \code{ocean_temp_array} has no realm dimension, it is expanded to
+#'   one column per realm in \code{vertical_migration_array}. When
+#'   \code{exposure_array} is omitted, exposure is inferred from whether a
+#'   species occupies a realm at any size class.
+#'
+#' @returns The modified \code{params} object with
+#'   \code{other_params(params)$vertical_migration} and
+#'   \code{other_params(params)$exposure} filled in.
 #'
 #' @export
 #'

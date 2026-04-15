@@ -2,26 +2,35 @@
 % Please edit documentation in R/realms.R
 \name{setVerticality}
 \alias{setVerticality}
-\title{Add realms to params object.}
+\title{Add realm-specific temperature structure to a therMizer model}
 \usage{
 setVerticality(params, vertical_migration_array, exposure_array = NULL)
 }
 \arguments{
-\item{params}{A mizer params object}
+\item{params}{A \linkS4class{MizerParams} object to augment.}
 
-\item{vertical_migration_array}{An array of number of realms x number of
-species x number of sizes filled with the time ratio of each species spending
-in each realms. Values must be positive and the sum of every realms per
-species per size must be one. Default is species spending equal time between
-all realms.}
+\item{vertical_migration_array}{Optional array of dimensions
+realm x species x size giving the fraction of time each species spends in
+each realm at each size. Values must be non-negative and sum to 1 across
+realms for every species-size combination.}
 
-\item{exposure_array}{An array of number of realms x species filled with values
-from 0 to 1. This array scales the effect of temperature for each species per
-realms. Default is ones.}
+\item{exposure_array}{Optional array of dimensions realm x species with
+values between 0 and 1 describing how strongly each species is exposed to
+temperature in each realm.}
+}
+\value{
+The modified \code{params} object with
+  \code{other_params(params)$vertical_migration} and
+  \code{other_params(params)$exposure} filled in.
 }
 \description{
-set different species specific realms with different temperatures
+Store vertical migration and exposure information in a
+\code{MizerParams} object so temperature effects can be combined across
+multiple realms.
 }
 \details{
-Vertical integration functions
+If \code{ocean_temp_array} has no realm dimension, it is expanded to
+  one column per realm in \code{vertical_migration_array}. When
+  \code{exposure_array} is omitted, exposure is inferred from whether a
+  species occupies a realm at any size class.
 }

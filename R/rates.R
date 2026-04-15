@@ -1,9 +1,14 @@
 
-#' @title therMizerEncounter
+#' Temperature-scaled encounter rate
 #'
-#' @description Calculates the temperature-scaled encounter rate.
+#' therMizer implementation of mizer's \code{Encounter} rate function.
+#' It multiplies the default encounter rate by
+#' \code{\link{scaled_temp_effect}()}.
 #'
 #' @inheritParams therMizerPredRate
+#'
+#' @returns A numeric matrix with the same dimensions as the value returned by
+#'   \code{mizer::mizerEncounter()}.
 #'
 #' @export
 
@@ -18,18 +23,27 @@ therMizerEncounter <- function(params, t, ...) {
 }
 
 
-#' @title therMizerPredRate
+#' Temperature-scaled predation mortality
 #'
-#' @description Calculates the temperature-scaled predation rate.
+#' therMizer implementation of mizer's \code{PredRate} rate function.
+#' It applies the encounter temperature scalar to predation mortality.
 #'
 #' @inheritParams scaled_temp_effect
-#' @param n A matrix of species abundances (species x size).
-#' @param n_pp A vector of the resource abundance by size.
-#' @param n_other A list of abundances for other dynamical components of the
-#' ecosystem.
-#' @param feeding_level An array (species x size) with the feeding level as
-#' calculated by getFeedingLevel().
-#' @param ... To pass further arguments down to the function
+#' @param n Numeric matrix of species abundances with species in rows and size
+#'   classes in columns.
+#' @param n_pp Numeric vector giving the background resource abundance by size.
+#' @param n_other List of abundances for any other dynamic ecosystem
+#'   components.
+#' @param feeding_level Numeric array of feeding levels, as returned by
+#'   \code{getFeedingLevel()}.
+#' @param ... Additional arguments passed through by mizer's internal rate
+#'   function machinery.
+#'
+#' @details If \code{params} uses a custom predation kernel, the function falls
+#'   back to the non-FFT implementation used by older versions of mizer.
+#'
+#' @returns A numeric array with the same structure expected from mizer's
+#'   \code{PredRate} rate function.
 #'
 #' @export
 
@@ -79,14 +93,18 @@ therMizerPredRate <- function(params, n, n_pp, n_other, t, feeding_level, ...) {
   return(pred_rate * params@ft_mask)
 }
 
-#' @title therMizerEReproAndGrowth
+#' Temperature-scaled energy for growth and reproduction
 #'
-#' @description Calculates the temperature-scaled energy available
-#' for growth and reproduction.
+#' therMizer implementation of mizer's \code{EReproAndGrowth} rate function.
+#' The assimilation term is calculated from encounter, while maintenance
+#' metabolism is multiplied by a temperature scalar that is aggregated across
+#' realms.
 #'
 #' @inheritParams therMizerPredRate
-#' @param encounter An array (species x size) with the encounter rate as
-#' calculated by getEncounter().
+#' @param encounter Numeric array of encounter rates, as returned by
+#'   \code{getEncounter()}.
+#'
+#' @returns A numeric matrix with the same dimensions as \code{encounter}.
 #'
 #' @export
 
@@ -131,12 +149,20 @@ therMizerEReproAndGrowth <- function(params, t, encounter, feeding_level, ...) {
 
 }
 
-#' @title plankton forcing
+#' Resource forcing from \code{n_pp_array}
 #'
-#' @description Uses the values from the n_pp_array slot to produce
-#' the resource spectrum.
+#' therMizer resource dynamics function that reads the time-varying plankton
+#' forcing stored in \code{other_params(params)$n_pp_array}.
 #'
 #' @inheritParams therMizerPredRate
+#'
+#' @details The function selects the row corresponding to time \code{t},
+#'   converts the stored log-scale spectrum back to density with
+#'   \code{10^x / params@dw_full}, and sets bins above
+#'   \code{w_pp_cutoff} to 0. If \code{t} falls outside the supplied time
+#'   series, the series is recycled cyclically.
+#'
+#' @returns A numeric vector of resource densities over \code{params@w_full}.
 #'
 #' @export
 

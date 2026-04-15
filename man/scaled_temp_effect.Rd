@@ -2,16 +2,32 @@
 % Please edit documentation in R/scale_temp_effect.R
 \name{scaled_temp_effect}
 \alias{scaled_temp_effect}
-\title{Temperature scaling factor}
+\title{Calculate the encounter and predation temperature scalar}
 \usage{
 scaled_temp_effect(params, t)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
+}
+\value{
+A numeric matrix with species in rows and size classes in columns.
 }
 \description{
-Calculate the temperature scaling factor for the encounter rate
-and predation rate.
+Evaluate the temperature-dependent scalar applied to encounter and predation
+processes at time \code{t}.
+}
+\details{
+The scalar is calculated separately for each realm, multiplied by
+  the corresponding exposure and vertical migration weights, and then summed
+  across realms. Values are set to 0 outside each species' thermal limits.
+}
+\seealso{
+\code{\link{upgradeTherParams}()},
+  \code{\link{setEncounterPredScale}()}, and
+  \code{\link{setVerticality}()}.
 }

@@ -1,12 +1,15 @@
 ### Functions related to creating the scaling parameters
 
-#' @title Set encounter scalar
+#' Set the encounter and predation scaling constant
 #'
-#' @description Creates the encounterpred_scale parameter which is
-#' used for scaling encounter and mortality rates and set the temperature scalar
-#' between 0 and 1.
+#' Compute the species-specific \code{encounterpred_scale} value used to
+#' normalise the encounter and predation temperature response so that the
+#' resulting scalar varies between 0 and 1 within each species' thermal range.
 #'
 #' @inheritParams scaled_temp_effect
+#'
+#' @returns The modified \code{params} object with
+#'   \code{species_params(params)$encounterpred_scale} filled in.
 #'
 #' @export
 #'
@@ -27,12 +30,17 @@ setEncounterPredScale <- function(params){
   return(params)
 }
 
-#' @title Metabolism temperature
+#' Set metabolism temperature scaling parameters
 #'
-#' @description Determine the minimum, maximum, and range of value for the
-#' effect of temperature on metabolism.
+#' Compute the minimum and range of the Arrhenius-style metabolism response over
+#' each species' thermal range. These values are later used to scale metabolic
+#' effects between 0 and 1.
 #'
 #' @inheritParams scaled_temp_effect
+#'
+#' @returns The modified \code{params} object with
+#'   \code{species_params(params)$metab_min} and
+#'   \code{species_params(params)$metab_range} filled in.
 #'
 #' @export
 #'
@@ -48,13 +56,26 @@ setMetabTher <- function(params){
 }
 
 
-#' @title Temperature scaling factor
+#' Calculate the encounter and predation temperature scalar
 #'
-#' @description Calculate the temperature scaling factor for the encounter rate
-#' and predation rate.
+#' Evaluate the temperature-dependent scalar applied to encounter and predation
+#' processes at time \code{t}.
 #'
-#' @param params An object of class \linkS4class{MizerParams}.
-#' @param t Time
+#' @param params A \linkS4class{MizerParams} object that has been prepared for
+#'   therMizer, typically with \code{\link{upgradeTherParams}()}.
+#' @param t Numeric time in the same units as the first dimension of
+#'   \code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+#'   supplied time series, the temperature series is recycled cyclically.
+#'
+#' @details The scalar is calculated separately for each realm, multiplied by
+#'   the corresponding exposure and vertical migration weights, and then summed
+#'   across realms. Values are set to 0 outside each species' thermal limits.
+#'
+#' @returns A numeric matrix with species in rows and size classes in columns.
+#'
+#' @seealso \code{\link{upgradeTherParams}()},
+#'   \code{\link{setEncounterPredScale}()}, and
+#'   \code{\link{setVerticality}()}.
 #'
 #' @export
 #'

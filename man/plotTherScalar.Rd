@@ -2,7 +2,7 @@
 % Please edit documentation in R/plots.R
 \name{plotTherScalar}
 \alias{plotTherScalar}
-\title{plotTherScalar}
+\title{Plot time-varying thermal scalars}
 \usage{
 plotTherScalar(
   params,
@@ -12,19 +12,31 @@ plotTherScalar(
 )
 }
 \arguments{
-\item{params}{A mizer params object}
+\item{params}{A therMizer-enabled \linkS4class{MizerParams} object
+containing species thermal limits and derived scaling parameters.}
 
-\item{species}{A character string. Select of specific species to display. It
-has to correspond to one of the species name in the mizerParams object.
-Default is NULL.}
+\item{species}{Optional character string giving a single species name to
+display. It must match one of the species names in \code{params}. Default
+is \code{NULL}, which keeps all species.}
 
-\item{species_panel}{Boolean value. If set to TRUE, the plot will be a panel
-of the species. Disabled if the argument species is not NULL. Default is TRUE.}
+\item{species_panel}{Logical. If \code{TRUE} and \code{species} is
+\code{NULL}, plot each species in a separate panel. Ignored when
+\code{species} is supplied. Default is \code{TRUE}.}
 
-\item{return_data}{Boolean value allowing to return the data frame used for
-the plot instead of the plot itself. Default is FALSE.}
+\item{return_data}{Logical. If \code{TRUE}, return the long-format data frame
+used to build the plot instead of a \code{ggplot2} object. Default is
+\code{FALSE}.}
+}
+\value{
+Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+  data frame with columns \code{Time}, \code{Species}, \code{Scalar}, and
+  \code{Type}.
 }
 \description{
-Plot the scalar value affecting the encounter rate and metabolsim
-of each species throughout the provided temperature in ocean_temp_array.
+Plot the encounter and metabolism scalars experienced by each species
+through time based on the temperature forcing stored in
+\code{other_params(params)$ocean_temp}.
+}
+\seealso{
+\code{\link{plotTherPerformance}()}.
 }

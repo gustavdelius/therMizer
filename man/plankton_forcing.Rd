@@ -2,18 +2,32 @@
 % Please edit documentation in R/rates.R
 \name{plankton_forcing}
 \alias{plankton_forcing}
-\title{plankton forcing}
+\title{Resource forcing from \code{n_pp_array}}
 \usage{
 plankton_forcing(params, t, ...)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
 
-\item{...}{To pass further arguments down to the function}
+\item{...}{Additional arguments passed through by mizer's internal rate
+function machinery.}
+}
+\value{
+A numeric vector of resource densities over \code{params@w_full}.
 }
 \description{
-Uses the values from the n_pp_array slot to produce
-the resource spectrum.
+therMizer resource dynamics function that reads the time-varying plankton
+forcing stored in \code{other_params(params)$n_pp_array}.
+}
+\details{
+The function selects the row corresponding to time \code{t},
+  converts the stored log-scale spectrum back to density with
+  \code{10^x / params@dw_full}, and sets bins above
+  \code{w_pp_cutoff} to 0. If \code{t} falls outside the supplied time
+  series, the series is recycled cyclically.
 }

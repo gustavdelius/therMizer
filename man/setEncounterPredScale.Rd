@@ -2,15 +2,20 @@
 % Please edit documentation in R/scale_temp_effect.R
 \name{setEncounterPredScale}
 \alias{setEncounterPredScale}
-\title{Set encounter scalar}
+\title{Set the encounter and predation scaling constant}
 \usage{
 setEncounterPredScale(params)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
+}
+\value{
+The modified \code{params} object with
+  \code{species_params(params)$encounterpred_scale} filled in.
 }
 \description{
-Creates the encounterpred_scale parameter which is
-used for scaling encounter and mortality rates and set the temperature scalar
-between 0 and 1.
+Compute the species-specific \code{encounterpred_scale} value used to
+normalise the encounter and predation temperature response so that the
+resulting scalar varies between 0 and 1 within each species' thermal range.
 }

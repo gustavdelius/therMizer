@@ -2,24 +2,33 @@
 % Please edit documentation in R/rates.R
 \name{therMizerEReproAndGrowth}
 \alias{therMizerEReproAndGrowth}
-\title{therMizerEReproAndGrowth}
+\title{Temperature-scaled energy for growth and reproduction}
 \usage{
 therMizerEReproAndGrowth(params, t, encounter, feeding_level, ...)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
 
-\item{encounter}{An array (species x size) with the encounter rate as
-calculated by getEncounter().}
+\item{encounter}{Numeric array of encounter rates, as returned by
+\code{getEncounter()}.}
 
-\item{feeding_level}{An array (species x size) with the feeding level as
-calculated by getFeedingLevel().}
+\item{feeding_level}{Numeric array of feeding levels, as returned by
+\code{getFeedingLevel()}.}
 
-\item{...}{To pass further arguments down to the function}
+\item{...}{Additional arguments passed through by mizer's internal rate
+function machinery.}
+}
+\value{
+A numeric matrix with the same dimensions as \code{encounter}.
 }
 \description{
-Calculates the temperature-scaled energy available
-for growth and reproduction.
+therMizer implementation of mizer's \code{EReproAndGrowth} rate function.
+The assimilation term is calculated from encounter, while maintenance
+metabolism is multiplied by a temperature scalar that is aggregated across
+realms.
 }

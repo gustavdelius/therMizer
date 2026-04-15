@@ -1,31 +1,55 @@
 ### Function aiming to upgrade a default mizer object to one able to work with the therMizer extension
 
-#' @title Upgrade to thermizer object
+#' Upgrade a \code{MizerParams} object for therMizer
 #'
-#' @description Wrapper function making a mizer params object
-#' into something useable by the package
+#' Add therMizer-specific thermal parameters, temperature forcing, optional
+#' plankton forcing, and realm structure to a standard
+#' \linkS4class{MizerParams} object.
 #'
-#' @param params A mizer params object
-#' @param temp_min A vector of numeric values the same length as the number of
-#' species in params. Contains the minimum temperature range per species.
-#' @param temp_max A vector of numeric values the same length as the number of
-#' species in params. Contains the maximum temperature range per species.
-#' @param ocean_temp_array A scalar, vector or array of temperature. The first dimension
-#' must be time. If it is an array, the second dimension must be realms. Numeric
-#' dimnames for time are assumed to be years. Use dates otherwise.
-#' @param n_pp_array An array of plankton forcing of dimensions time x sizes
-#' @param vertical_migration_array An array of number of realms x number of
-#' species x number of sizes filled with the time ratio of each species spending
-#' in each realms. Values must be positive and the sum of every realms per
-#' species per size must be one. Default is species spending equal time between
-#' all realms.
-#' @param exposure_array An array of number of realms x species filled with values
-#' from 0 to 1. This array scales the effect of temperature for each species per
-#' realms. Default is ones.
-#' @param aerobic_effect Boolean value which determines if encounter rate is
-#' affected by temperature. Default is TRUE.
-#' @param metabolism_effect Boolean value which determines if metabolism rate is
-#' affected by temperature. Default is TRUE.
+#' @param params A \linkS4class{MizerParams} object to augment.
+#' @param temp_min Numeric vector giving the lower thermal limit of each
+#'   species, in degrees C. Its length must match the number of species in
+#'   \code{params}.
+#' @param temp_max Numeric vector giving the upper thermal limit of each
+#'   species, in degrees C. Its length must match the number of species in
+#'   \code{params}.
+#' @param ocean_temp_array Numeric scalar, vector, matrix, or array of
+#'   temperatures. The first dimension is interpreted as time. If a second
+#'   dimension is present it is interpreted as realms. Character time labels in
+#'   \code{\%Y}, \code{\%Y-\%m}, or \code{\%Y-\%m-\%d} format are converted to
+#'   numeric years.
+#' @param n_pp_array Optional vector, matrix, or array of plankton forcing with
+#'   dimensions time x size. The time dimension must match
+#'   \code{ocean_temp_array}, and the size dimension must match
+#'   \code{params@w_full}. Values are interpreted on the log10 scale used by
+#'   \code{\link{plankton_forcing}()}.
+#' @param vertical_migration_array Optional array of dimensions
+#'   realm x species x size giving the fraction of time each species spends in
+#'   each realm at each size. Values must be non-negative and sum to 1 across
+#'   realms for every species-size combination.
+#' @param exposure_array Optional array of dimensions realm x species with
+#'   values between 0 and 1 describing how strongly each species is exposed to
+#'   temperature in each realm.
+#' @param aerobic_effect Logical. If \code{TRUE}, replace mizer's default
+#'   encounter and predation-rate functions with therMizer's temperature-scaled
+#'   versions. Default is \code{TRUE}.
+#' @param metabolism_effect Logical. If \code{TRUE}, replace mizer's default
+#'   energy-for-growth-and-reproduction function with therMizer's
+#'   temperature-scaled version. Default is \code{TRUE}.
+#'
+#' @details If \code{vertical_migration_array} is omitted, a default realm
+#'   allocation is constructed from the available temperature data. If
+#'   \code{n_pp_array} is supplied, the resource dynamics function is set to
+#'   \code{\link{plankton_forcing}()}. The returned object also stores a time
+#'   offset in \code{other_params(params)$t_idx} so therMizer can align mizer's
+#'   simulation time with the supplied forcing series.
+#'
+#' @returns The modified \code{params} object, ready to use with therMizer.
+#'
+#' @seealso \code{\link{setVerticality}()},
+#'   \code{\link{setEncounterPredScale}()},
+#'   \code{\link{setMetabTher}()}, and
+#'   \code{\link{plankton_forcing}()}.
 #'
 #' @export
 

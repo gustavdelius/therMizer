@@ -2,19 +2,30 @@
 % Please edit documentation in R/plots.R
 \name{plotTherPerformance}
 \alias{plotTherPerformance}
-\title{plot thermal performance.}
+\title{Plot thermal performance curves}
 \usage{
 plotTherPerformance(params, resolution = 0.2, return_data = FALSE)
 }
 \arguments{
-\item{params}{A mizer params object}
+\item{params}{A therMizer-enabled \linkS4class{MizerParams} object
+containing species thermal limits and derived scaling parameters.}
 
-\item{resolution}{Numeric value which determines the step-width between each
-calculation of the species' thermal performance. Default is 0.2.}
+\item{resolution}{Numeric step size, in degrees C, between temperature values
+used to evaluate the curves. Default is \code{0.2}.}
 
-\item{return_data}{Boolean value allowing to return the data frame used for
-the plot instead of the plot itself. Default is FALSE.}
+\item{return_data}{Logical. If \code{TRUE}, return the long-format data frame
+used to build the plot instead of a \code{ggplot2} object. Default is
+\code{FALSE}.}
+}
+\value{
+Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+  data frame with columns \code{temperature}, \code{Species},
+  \code{scalar}, and \code{Type}.
 }
 \description{
-Take a look at the thermal performance of the species.
+Plot the encounter and metabolic temperature response curves implied by the
+species-level thermal parameters stored in \code{params}.
+}
+\seealso{
+\code{\link{plotTherScalar}()}.
 }
