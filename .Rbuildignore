@@ -6,3 +6,6 @@
 ^\.git$
 ^\.gitignore$
 ^\.\.Rcheck$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

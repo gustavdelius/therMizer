@@ -1,0 +1,52 @@
+url: ~
+template:
+  bootstrap: 5
+
+reference:
+  - title: Model setup
+    desc: >
+      Functions for combining a standard mizer `MizerParams` object with
+      therMizer's temperature forcing, realm structure, and rate functions.
+    contents:
+      - upgradeTherParams
+      - setVerticality
+
+  - title: Scaling parameters
+    desc: >
+      Functions that compute the species-specific constants used to normalise
+      the encounter/predation and metabolism temperature responses to the
+      \[0, 1\] interval. These are called automatically by `upgradeTherParams()`
+      but are also exported for direct use.
+    contents:
+      - setEncounterPredScale
+      - setMetabTher
+
+  - title: Temperature-scaled rate functions
+    desc: >
+      Drop-in replacements for mizer's built-in rate functions that incorporate
+      temperature effects. Registered automatically by `upgradeTherParams()` and
+      called internally by `project()`.
+    contents:
+      - therMizerEncounter
+      - therMizerPredRate
+      - therMizerEReproAndGrowth
+      - plankton_forcing
+
+  - title: Diagnostics
+    desc: >
+      Functions for inspecting the temperature scalars that therMizer applies
+      at each time step.
+    contents:
+      - scaled_temp_effect
+
+  - title: Visualisation
+    desc: >
+      Plotting functions for exploring species' thermal performance curves and
+      the time-varying temperature scalars they experience.
+    contents:
+      - plotTherPerformance
+      - plotTherScalar
+
+  - title: Package
+    contents:
+      - therMizer-package

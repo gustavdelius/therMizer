@@ -1,0 +1,19 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/plankton_forcing.html</loc></url>
+<url><loc>/reference/plotTherPerformance.html</loc></url>
+<url><loc>/reference/plotTherScalar.html</loc></url>
+<url><loc>/reference/scaled_temp_effect.html</loc></url>
+<url><loc>/reference/setEncounterPredScale.html</loc></url>
+<url><loc>/reference/setMetabTher.html</loc></url>
+<url><loc>/reference/setVerticality.html</loc></url>
+<url><loc>/reference/therMizer-package.html</loc></url>
+<url><loc>/reference/therMizerEReproAndGrowth.html</loc></url>
+<url><loc>/reference/therMizerEncounter.html</loc></url>
+<url><loc>/reference/therMizerPredRate.html</loc></url>
+<url><loc>/reference/upgradeTherParams.html</loc></url>
+</urlset>
+
