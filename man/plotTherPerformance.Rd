@@ -7,7 +7,7 @@
 plotTherPerformance(params, resolution = 0.2, return_data = FALSE)
 }
 \arguments{
-\item{params}{A therMizer-enabled \linkS4class{MizerParams} object
+\item{params}{A therMizer-enabled \code{MizerParams} object
 containing species thermal limits and derived scaling parameters.}
 
 \item{resolution}{Numeric step size, in degrees C, between temperature values

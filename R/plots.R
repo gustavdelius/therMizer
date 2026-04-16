@@ -1,7 +1,8 @@
 # scripts containing all plot functions of the package
 
 # to appease R CMD checks
-globalVariables(c("temperature", "scalar","Type"))
+utils::globalVariables(c("Scalar", "Species", "Time", "Type", "scalar",
+                         "temperature"))
 
 # common theme for the package
 therTheme <- function(){
@@ -18,7 +19,7 @@ therTheme <- function(){
 #' Plot the encounter and metabolic temperature response curves implied by the
 #' species-level thermal parameters stored in \code{params}.
 #'
-#' @param params A therMizer-enabled \linkS4class{MizerParams} object
+#' @param params A therMizer-enabled \code{MizerParams} object
 #'   containing species thermal limits and derived scaling parameters.
 #'
 #' @param return_data Logical. If \code{TRUE}, return the long-format data frame
@@ -149,9 +150,7 @@ plotTherScalar <- function(params, species = NULL, species_panel = TRUE, return_
   scalar_met <- NULL
   for(t in as.numeric(dimnames(other_params(params)$ocean_temp)[[1]])){
     # encounter
-    scalar_en <- scaled_temp_effect(params,t) %>%
-      apply(1,mean) %>%
-      rbind(scalar_en,.)
+    scalar_en <- rbind(scalar_en, apply(scaled_temp_effect(params,t), 1, mean))
 
     # Metabolism
     temp_effect_metab_realms <- array(NA, dim = c(dim(other_params(params)$vertical_migration)), dimnames = c(dimnames(other_params(params)$vertical_migration)))
@@ -176,21 +175,23 @@ plotTherScalar <- function(params, species = NULL, species_panel = TRUE, return_
 
       temp_effect_metab_realms[r,,] <- temp_effect_metabolism_r*other_params(params)$exposure[r,]*other_params(params)$vertical_migration[r,,]
     }
-    scalar_met <- colSums(temp_effect_metab_realms) %>%
-      apply(1,mean) %>%
-      rbind(scalar_met,.)
+    scalar_met <- rbind(scalar_met, apply(colSums(temp_effect_metab_realms), 1, mean))
   }
   rownames(scalar_en) <- rownames(scalar_met) <-as.numeric(dimnames(other_params(params)$ocean_temp)[[1]])
 
-  plot_dat2 <- reshape2::melt(scalar_met) %>%
-    mutate(Type = "Metabolism")
-  plot_dat <- reshape2::melt(scalar_en) %>%
-    mutate(Type = "Encounter") %>%
-    rbind(plot_dat2) %>%
-    rename(Time = Var1, Species = Var2, Scalar = value)
+  plot_dat2 <- reshape2::melt(scalar_met)
+  plot_dat2$Type <- "Metabolism"
+  plot_dat <- reshape2::melt(scalar_en)
+  plot_dat$Type <- "Encounter"
+  plot_dat <- rbind(plot_dat, plot_dat2)
+  names(plot_dat)[names(plot_dat) == "Var1"] <- "Time"
+  names(plot_dat)[names(plot_dat) == "Var2"] <- "Species"
+  names(plot_dat)[names(plot_dat) == "value"] <- "Scalar"
 
-  if(!is.null(species)) plot_dat <- filter(plot_dat, Species == species) %>%
-    mutate(Species = as.character(Species))
+  if (!is.null(species)) {
+    plot_dat <- plot_dat[plot_dat$Species == species, ]
+    plot_dat$Species <- as.character(plot_dat$Species)
+  }
 
   p <- ggplot(plot_dat, aes(x = Time, y = Scalar)) +
     scale_y_continuous(limits = c(0,1), name = "Scalar value") +

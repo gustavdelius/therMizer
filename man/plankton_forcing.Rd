@@ -7,7 +7,7 @@
 plankton_forcing(params, t, ...)
 }
 \arguments{
-\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+\item{params}{A \code{MizerParams} object that has been prepared for
 therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
 \item{t}{Numeric time in the same units as the first dimension of

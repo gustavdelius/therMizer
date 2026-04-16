@@ -7,7 +7,7 @@
 setVerticality(params, vertical_migration_array, exposure_array = NULL)
 }
 \arguments{
-\item{params}{A \linkS4class{MizerParams} object to augment.}
+\item{params}{A \code{MizerParams} object to augment.}
 
 \item{vertical_migration_array}{Optional array of dimensions
 realm x species x size giving the fraction of time each species spends in

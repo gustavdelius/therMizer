@@ -6,12 +6,9 @@
 #' that contains additional features regarding the effect
 #' of temperature on organisms.
 #'
-#' @import mizer dplyr ggplot2 assertthat lubridate
+#' @import ggplot2 mizer
 #' @importFrom stats mvfft
 #' @importFrom reshape2 melt
-#' @importFrom stringr str_pad
 #' @md
 #' @keywords internal
 "_PACKAGE"
-
-

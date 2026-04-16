@@ -7,7 +7,7 @@
 setMetabTher(params)
 }
 \arguments{
-\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+\item{params}{A \code{MizerParams} object that has been prepared for
 therMizer, typically with \code{\link{upgradeTherParams}()}.}
 }
 \value{

@@ -61,7 +61,7 @@ setMetabTher <- function(params){
 #' Evaluate the temperature-dependent scalar applied to encounter and predation
 #' processes at time \code{t}.
 #'
-#' @param params A \linkS4class{MizerParams} object that has been prepared for
+#' @param params A \code{MizerParams} object that has been prepared for
 #'   therMizer, typically with \code{\link{upgradeTherParams}()}.
 #' @param t Numeric time in the same units as the first dimension of
 #'   \code{other_params(params)$ocean_temp}. If \code{t} falls outside the

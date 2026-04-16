@@ -7,7 +7,7 @@
 therMizerPredRate(params, n, n_pp, n_other, t, feeding_level, ...)
 }
 \arguments{
-\item{params}{A \linkS4class{MizerParams} object that has been prepared for
+\item{params}{A \code{MizerParams} object that has been prepared for
 therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
 \item{n}{Numeric matrix of species abundances with species in rows and size

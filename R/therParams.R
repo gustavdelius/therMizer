@@ -1,12 +1,44 @@
 ### Function aiming to upgrade a default mizer object to one able to work with the therMizer extension
 
+# helper function
+decimal_year <- function(date_vec) {
+    parse_order <- ifelse(nchar(date_vec) <= 4, "%Y",
+                          ifelse(nchar(date_vec) == 7, "%Y-%m",
+                                 "%Y-%m-%d"))
+    pad_year <- parse_order == "%Y" & nchar(date_vec) < 4
+    if (any(pad_year)) {
+        date_vec[pad_year] <- sprintf("%04d", as.integer(date_vec[pad_year]))
+    }
+
+    normalized_dates <- ifelse(
+        parse_order == "%Y",
+        paste0(date_vec, "-01-01"),
+        ifelse(parse_order == "%Y-%m",
+               paste0(date_vec, "-01"),
+               date_vec)
+    )
+    parsed_dates <- as.Date(normalized_dates)
+    if (anyNA(parsed_dates)) {
+        stop("The supplied time labels could not be parsed as dates.")
+    }
+
+    year_start <- as.Date(paste0(format(parsed_dates, "%Y"), "-01-01"))
+    next_year_start <- as.Date(paste0(as.integer(format(parsed_dates, "%Y")) + 1L,
+                                      "-01-01"))
+
+    as.numeric(format(parsed_dates, "%Y")) +
+        as.numeric(parsed_dates - year_start) /
+        as.numeric(next_year_start - year_start)
+}
+
+
 #' Upgrade a \code{MizerParams} object for therMizer
 #'
 #' Add therMizer-specific thermal parameters, temperature forcing, optional
 #' plankton forcing, and realm structure to a standard
-#' \linkS4class{MizerParams} object.
+#' \code{MizerParams} object.
 #'
-#' @param params A \linkS4class{MizerParams} object to augment.
+#' @param params A \code{MizerParams} object to augment.
 #' @param temp_min Numeric vector giving the lower thermal limit of each
 #'   species, in degrees C. Its length must match the number of species in
 #'   \code{params}.
@@ -90,13 +122,7 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
       names(ocean_temp_array) <- sprintf("%04d", seq(0, length.out = length(ocean_temp_array)))
     }
     date_vec <- names(ocean_temp_array)
-    parse_order <- ifelse(nchar(date_vec) <= 4, "%Y",
-                          ifelse(nchar(date_vec) == 7, "%Y-%m",
-                                 "%Y-%m-%d"))
-    # if years only and they are less than 4 char
-    if(parse_order[1] == "%Y" & any(nchar(date_vec) < 4)) date_vec <- str_pad(date_vec, 4, pad = '0')
-    date_vec <- parse_date_time(date_vec, orders = parse_order)
-    date_vec <- as.numeric(year(date_vec)) + as.numeric(yday(date_vec) - 1) / as.numeric(ifelse(leap_year(date_vec), 366, 365))
+    date_vec <- decimal_year(date_vec)
 
     ocean_temp_array <- matrix(ocean_temp_array,
                                nrow = length(ocean_temp_array),
@@ -109,12 +135,7 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
     # assuming that the second dimension is realms. If there is an issue with that it will be signaled later
     ## check dimnames
     date_vec <- dimnames(ocean_temp_array)[[1]]
-    parse_order <- ifelse(nchar(date_vec) <= 4, "%Y",
-                          ifelse(nchar(date_vec) == 7, "%Y-%m",
-                                 "%Y-%m-%d"))
-    if(parse_order[1] == "%Y" & any(nchar(date_vec) < 4)) date_vec <- str_pad(date_vec, 4, pad = '0')
-    date_vec <- parse_date_time(date_vec, orders = parse_order)
-    date_vec <- as.numeric(year(date_vec)) + as.numeric(yday(date_vec) - 1) / as.numeric(ifelse(leap_year(date_vec), 366, 365))
+    date_vec <- decimal_year(date_vec)
     dimnames(ocean_temp_array)[[1]] <- date_vec
   } else stop("The ocean_temp_array is of the wrong format")
 

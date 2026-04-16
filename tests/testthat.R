@@ -1,3 +1,5 @@
+Sys.setenv(TZ = "UTC")
+
 library(testthat)
 library(therMizer)
 

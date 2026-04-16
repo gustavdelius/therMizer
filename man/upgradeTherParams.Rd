@@ -17,7 +17,7 @@ upgradeTherParams(
 )
 }
 \arguments{
-\item{params}{A \linkS4class{MizerParams} object to augment.}
+\item{params}{A \code{MizerParams} object to augment.}
 
 \item{temp_min}{Numeric vector giving the lower thermal limit of each
 species, in degrees C. Its length must match the number of species in
@@ -62,7 +62,7 @@ The modified \code{params} object, ready to use with therMizer.
 \description{
 Add therMizer-specific thermal parameters, temperature forcing, optional
 plankton forcing, and realm structure to a standard
-\linkS4class{MizerParams} object.
+\code{MizerParams} object.
 }
 \details{
 If \code{vertical_migration_array} is omitted, a default realm
