@@ -11,6 +11,18 @@
 #' @returns The modified \code{params} object with
 #'   \code{species_params(params)$encounterpred_scale} filled in.
 #'
+#' @examples
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' species_params(params)$temp_min <- c(-2, 5)
+#' species_params(params)$temp_max <- c(12, 18)
+#' params <- setEncounterPredScale(params)
+#' species_params(params)$encounterpred_scale
+#'
 #' @export
 #'
 setEncounterPredScale <- function(params){
@@ -41,6 +53,19 @@ setEncounterPredScale <- function(params){
 #' @returns The modified \code{params} object with
 #'   \code{species_params(params)$metab_min} and
 #'   \code{species_params(params)$metab_range} filled in.
+#'
+#' @examples
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' species_params(params)$temp_min <- c(-2, 5)
+#' species_params(params)$temp_max <- c(12, 18)
+#' params <- setMetabTher(params)
+#' species_params(params)$metab_min
+#' species_params(params)$metab_range
 #'
 #' @export
 #'
@@ -76,6 +101,23 @@ setMetabTher <- function(params){
 #' @seealso \code{\link{upgradeTherParams}()},
 #'   \code{\link{setEncounterPredScale}()}, and
 #'   \code{\link{setVerticality}()}.
+#'
+#' @examples
+#' \donttest{
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' params <- suppressWarnings(suppressMessages(
+#'   upgradeTherParams(params,
+#'     temp_min = c(-2, 5), temp_max = c(12, 18),
+#'     ocean_temp_array = c("2000" = 5, "2001" = 6, "2002" = 7))))
+#' # Returns a species x size matrix of temperature scalars
+#' ste <- scaled_temp_effect(params, t = 2001)
+#' dim(ste)  # nrow = n_species, ncol = n_size_classes
+#' }
 #'
 #' @export
 #'

@@ -34,3 +34,37 @@ If \code{ocean_temp_array} has no realm dimension, it is expanded to
   \code{exposure_array} is omitted, exposure is inferred from whether a
   species occupies a realm at any size class.
 }
+\examples{
+\donttest{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+species_params(params)$temp_min <- c(-2, 5)
+species_params(params)$temp_max <- c(12, 18)
+
+# Store a two-realm temperature array in params before calling setVerticality
+ocean_temp <- array(
+  c(4, 8, 5, 9, 6, 10),
+  dim = c(3, 2),
+  dimnames = list(time = c("2000", "2001", "2002"),
+                  realm = c("surface", "deep")))
+other_params(params)$ocean_temp <- ocean_temp
+
+# sp1 stays in the surface realm; sp2 stays in the deep realm
+vm <- array(0,
+  dim = c(2, 2, length(params@w)),
+  dimnames = list(realm = c("surface", "deep"),
+                  sp = c("sp1", "sp2"), w = params@w))
+vm["surface", "sp1", ] <- 1
+vm["deep",    "sp2", ] <- 1
+
+params <- setEncounterPredScale(params)
+params <- setMetabTher(params)
+params <- setVerticality(params, vm)
+str(other_params(params)$exposure)
+}
+
+}

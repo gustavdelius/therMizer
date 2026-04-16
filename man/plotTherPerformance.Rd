@@ -26,6 +26,26 @@ Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
 Plot the encounter and metabolic temperature response curves implied by the
 species-level thermal parameters stored in \code{params}.
 }
+\examples{
+\donttest{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+params <- suppressWarnings(suppressMessages(
+  upgradeTherParams(params,
+    temp_min = c(-2, 5), temp_max = c(12, 18),
+    ocean_temp_array = c("2000" = 5))))
+plotTherPerformance(params)
+
+# Return the underlying data instead of a plot
+df <- plotTherPerformance(params, return_data = TRUE)
+head(df)
+}
+
+}
 \seealso{
 \code{\link{plotTherScalar}()}.
 }

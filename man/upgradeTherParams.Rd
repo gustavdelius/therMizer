@@ -72,6 +72,45 @@ If \code{vertical_migration_array} is omitted, a default realm
   offset in \code{other_params(params)$t_idx} so therMizer can align mizer's
   simulation time with the supplied forcing series.
 }
+\examples{
+\donttest{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+
+# Minimal usage: constant temperature, one realm per species
+params <- suppressWarnings(suppressMessages(
+  upgradeTherParams(params,
+    temp_min = c(-2, 5), temp_max = c(12, 18),
+    ocean_temp_array = c("2000" = 5, "2001" = 6, "2002" = 7))))
+
+# Project for 2 years starting from the first temperature time step
+sim <- project(params, t_start = 2000, t_max = 2, dt = 1)
+
+# Two realms: sp1 lives at the surface, sp2 in the deep
+ocean_temp <- array(
+  c(4, 8, 5, 9, 6, 10),
+  dim = c(3, 2),
+  dimnames = list(time = c("2000", "2001", "2002"),
+                  realm = c("surface", "deep")))
+vm <- array(0,
+  dim = c(2, 2, length(params@w)),
+  dimnames = list(realm = c("surface", "deep"),
+                  sp = c("sp1", "sp2"), w = params@w))
+vm["surface", "sp1", ] <- 1
+vm["deep",    "sp2", ] <- 1
+params2 <- suppressWarnings(suppressMessages(
+  upgradeTherParams(params,
+    temp_min = c(-2, 5), temp_max = c(12, 18),
+    ocean_temp_array = ocean_temp,
+    vertical_migration_array = vm)))
+sim2 <- project(params2, t_start = 2000, t_max = 2, dt = 1)
+}
+
+}
 \seealso{
 \code{\link{setVerticality}()},
   \code{\link{setEncounterPredScale}()},
