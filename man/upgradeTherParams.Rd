@@ -48,13 +48,13 @@ realms for every species-size combination.}
 values between 0 and 1 describing how strongly each species is exposed to
 temperature in each realm.}
 
-\item{aerobic_effect}{Logical. If \code{TRUE}, replace mizer's default
-encounter and predation-rate functions with therMizer's temperature-scaled
-versions. Default is \code{TRUE}.}
+\item{aerobic_effect}{Logical. If \code{TRUE}, activate therMizer's
+temperature scaling for encounter and predation-rate calculations. Default
+is \code{TRUE}.}
 
-\item{metabolism_effect}{Logical. If \code{TRUE}, replace mizer's default
-energy-for-growth-and-reproduction function with therMizer's
-temperature-scaled version. Default is \code{TRUE}.}
+\item{metabolism_effect}{Logical. If \code{TRUE}, activate therMizer's
+temperature scaling for maintenance metabolism in the
+energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.}
 }
 \value{
 The modified \code{params} object, ready to use with therMizer.

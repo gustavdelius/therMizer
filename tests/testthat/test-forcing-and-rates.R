@@ -54,4 +54,16 @@ test_that("temperature-scaled rate functions collapse to zero outside thermal li
   expect_true(all(encounter == 0))
   expect_true(all(pred_rate == 0))
   expect_true(all(e_growth == 0))
+
+  rates <- mizer::getRates(
+    params,
+    n = n,
+    n_pp = n_pp,
+    n_other = n_other,
+    t = 2000
+  )
+
+  expect_true(all(rates$encounter == 0))
+  expect_true(all(rates$pred_rate == 0))
+  expect_true(all(rates$e_growth == 0))
 })

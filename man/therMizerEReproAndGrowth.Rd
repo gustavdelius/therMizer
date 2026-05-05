@@ -4,11 +4,28 @@
 \alias{therMizerEReproAndGrowth}
 \title{Temperature-scaled energy for growth and reproduction}
 \usage{
-therMizerEReproAndGrowth(params, t, encounter, feeding_level, ...)
+therMizerEReproAndGrowth(
+  params,
+  n = NULL,
+  n_pp = NULL,
+  n_other = NULL,
+  t = 0,
+  encounter,
+  feeding_level,
+  ...
+)
 }
 \arguments{
 \item{params}{A \code{MizerParams} object that has been prepared for
 therMizer, typically with \code{\link{upgradeTherParams}()}.}
+
+\item{n}{Numeric matrix of species abundances with species in rows and size
+classes in columns.}
+
+\item{n_pp}{Numeric vector giving the background resource abundance by size.}
+
+\item{n_other}{List of abundances for any other dynamic ecosystem
+components.}
 
 \item{t}{Numeric time in the same units as the first dimension of
 \code{other_params(params)$ocean_temp}. If \code{t} falls outside the

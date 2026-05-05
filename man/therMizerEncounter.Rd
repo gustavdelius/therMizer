@@ -4,11 +4,19 @@
 \alias{therMizerEncounter}
 \title{Temperature-scaled encounter rate}
 \usage{
-therMizerEncounter(params, t, ...)
+therMizerEncounter(params, n, n_pp, n_other, t = 0, ...)
 }
 \arguments{
 \item{params}{A \code{MizerParams} object that has been prepared for
 therMizer, typically with \code{\link{upgradeTherParams}()}.}
+
+\item{n}{Numeric matrix of species abundances with species in rows and size
+classes in columns.}
+
+\item{n_pp}{Numeric vector giving the background resource abundance by size.}
+
+\item{n_other}{List of abundances for any other dynamic ecosystem
+components.}
 
 \item{t}{Numeric time in the same units as the first dimension of
 \code{other_params(params)$ocean_temp}. If \code{t} falls outside the

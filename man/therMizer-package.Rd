@@ -23,6 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Romain Forestier \email{romain.forestier@utas.edu.au} [copyright holder]
   \item Phoebe Woodworth-Jefcoats \email{phoebe.woodworth-jefcoats@noaa.gov} (\href{https://orcid.org/0000-0001-9353-923X}{ORCID}) [copyright holder]
 }
 

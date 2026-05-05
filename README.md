@@ -52,15 +52,13 @@ By default, therMizer provides values for the `realm`, `vertical_migration`, and
 
 ### Temperature functions
 
-Temperature affects species within mizer by overwriting mizer's default rate functions and replacing them with custom functions using the new set of parameters. Two new functions `therMizerEncounter` and `therMizerPredRate` affect the encounter and predation rates and one function `therMizerEReproAndGrowth` takes care of the maintenance metabolism. These functions can be disabled by setting the arguments `aerobic_effect` and `metabolism_effect` to `FALSE` for encounter and predation rates and for metabolism, respectively.
-
-These functions can also be overridden by the user using `setRateFunction()`. Example below:
-
-```r
-
-params <- setRateFunction(params,"Encounter","newEncounterFunction")
-
-```
+Temperature affects species within mizer through mizer's extension chain.
+Calling `upgradeTherParams()` records therMizer in `params@extensions` and
+activates projection hooks that can compose with hooks from other extension
+packages. The encounter and predation-rate calculations are temperature-scaled
+when `aerobic_effect = TRUE`; maintenance metabolism in the
+energy-for-growth-and-reproduction calculation is temperature-scaled when
+`metabolism_effect = TRUE`.
 
 ### Input
 

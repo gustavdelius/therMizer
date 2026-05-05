@@ -62,12 +62,12 @@ decimal_year <- function(date_vec) {
 #' @param exposure_array Optional array of dimensions realm x species with
 #'   values between 0 and 1 describing how strongly each species is exposed to
 #'   temperature in each realm.
-#' @param aerobic_effect Logical. If \code{TRUE}, replace mizer's default
-#'   encounter and predation-rate functions with therMizer's temperature-scaled
-#'   versions. Default is \code{TRUE}.
-#' @param metabolism_effect Logical. If \code{TRUE}, replace mizer's default
-#'   energy-for-growth-and-reproduction function with therMizer's
-#'   temperature-scaled version. Default is \code{TRUE}.
+#' @param aerobic_effect Logical. If \code{TRUE}, activate therMizer's
+#'   temperature scaling for encounter and predation-rate calculations. Default
+#'   is \code{TRUE}.
+#' @param metabolism_effect Logical. If \code{TRUE}, activate therMizer's
+#'   temperature scaling for maintenance metabolism in the
+#'   energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.
 #'
 #' @details If \code{vertical_migration_array} is omitted, a default realm
 #'   allocation is constructed from the available temperature data. If
@@ -254,13 +254,12 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
     params <- setVerticality(params, vertical_migration_array)
   }
 
-  ## rate functions
-  if(aerobic_effect){
-    params <- setRateFunction(params, "Encounter", "therMizerEncounter")
-    params <- setRateFunction(params, "PredRate", "therMizerPredRate")
-  }
+  other_params(params)$therMizer <- list(
+    aerobic_effect = isTRUE(aerobic_effect),
+    metabolism_effect = isTRUE(metabolism_effect)
+  )
 
-  if(metabolism_effect) params <- setRateFunction(params, "EReproAndGrowth", "therMizerEReproAndGrowth")
+  params <- registerTherMizerExtension(params)
 
   ## time dimension
   other_params(params)$t_idx = - as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1])
@@ -268,20 +267,31 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
   return(params)
 }
 
-#' #' @title Project thermizer object
-#' #'
-#' #' @description Wrapper function adjusting simulation time and start time
-#' #' for the project function
-#' #'
-#' #' @inheritParams upgradeTherParams
-#' #'
-#' #' @export
-#' #'
-#' therProject <- function(params){
-#'   sim_times <- c(as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1]),
-#'                  dim(other_params(params)$ocean_temp)[1])
-#'
-#'   cat(sprintf("The simulation is set to start in %d and will run for %d years.\n",sim_times[1], sim_times[2]))
-#'
-#'   sim <- project(params, t_start = sim_times[1], t_max = sim_times[2]-1)
-#' }
+registerTherMizerExtension <- function(params) {
+  extensions <- params@extensions
+  extensions <- extensions[names(extensions) != "therMizer"]
+  params@extensions <- c(
+    therMizer = NA_character_,
+    extensions
+  )
+  mizer::registerExtensions(params@extensions)
+  mizer::coerceToExtensionClass(params)
+}
+
+# @title Project thermizer object
+#
+# @description Wrapper function adjusting simulation time and start time
+# for the project function
+#
+# @inheritParams upgradeTherParams
+#
+# @export
+#
+# therProject <- function(params){
+#   sim_times <- c(as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1]),
+#                  dim(other_params(params)$ocean_temp)[1])
+#
+#   cat(sprintf("The simulation is set to start in %d and will run for %d years.\n",sim_times[1], sim_times[2]))
+#
+#   sim <- project(params, t_start = sim_times[1], t_max = sim_times[2]-1)
+# }
