@@ -55,6 +55,7 @@ thermizer_metabolism_effect <- function(params, t) {
   colSums(temp_effect_metab_realms)
 }
 
+#' @method projectEncounter therMizer
 #' @export
 projectEncounter.therMizer <- function(params, n, n_pp, n_other, t = 0, ...) {
   if (isTRUE(therMizerOptions(params)$aerobic_effect)) {
@@ -64,6 +65,7 @@ projectEncounter.therMizer <- function(params, n, n_pp, n_other, t = 0, ...) {
   NextMethod()
 }
 
+#' @method projectPredRate therMizer
 #' @export
 projectPredRate.therMizer <- function(params, n, n_pp, n_other, t = 0,
                                       feeding_level, ...) {
@@ -74,6 +76,7 @@ projectPredRate.therMizer <- function(params, n, n_pp, n_other, t = 0,
   NextMethod()
 }
 
+#' @method projectEReproAndGrowth therMizer
 #' @export
 projectEReproAndGrowth.therMizer <- function(params, n, n_pp, n_other, t = 0,
                                              encounter, feeding_level, ...) {
@@ -84,86 +87,14 @@ projectEReproAndGrowth.therMizer <- function(params, n, n_pp, n_other, t = 0,
   NextMethod()
 }
 
-#' Temperature-scaled encounter rate
-#'
-#' therMizer implementation of mizer's \code{Encounter} rate function.
-#' It multiplies the default encounter rate by
-#' \code{\link{scaled_temp_effect}()}.
-#'
-#' @inheritParams therMizerPredRate
-#'
-#' @returns A numeric matrix with the same dimensions as the value returned by
-#'   \code{mizer::mizerEncounter()}.
-#'
-#' @export
-
-therMizerEncounter <- function(params, n, n_pp, n_other, t = 0, ...) {
-  params <- withTherMizerSearchVolume(params, t)
-  mizerEncounter(params, n = n, n_pp = n_pp, n_other = n_other, t = t, ...)
-}
-
-
-#' Temperature-scaled predation mortality
-#'
-#' therMizer implementation of mizer's \code{PredRate} rate function.
-#' It applies the encounter temperature scalar to predation mortality.
-#'
-#' @inheritParams scaled_temp_effect
-#' @param n Numeric matrix of species abundances with species in rows and size
-#'   classes in columns.
-#' @param n_pp Numeric vector giving the background resource abundance by size.
-#' @param n_other List of abundances for any other dynamic ecosystem
-#'   components.
-#' @param feeding_level Numeric array of feeding levels, as returned by
-#'   \code{getFeedingLevel()}.
-#' @param ... Additional arguments passed through by mizer's internal rate
-#'   function machinery.
-#'
-#' @details If \code{params} uses a custom predation kernel, the function falls
-#'   back to the non-FFT implementation used by older versions of mizer.
-#'
-#' @returns A numeric array with the same structure expected from mizer's
-#'   \code{PredRate} rate function.
-#'
-#' @export
-
-therMizerPredRate <- function(params, n, n_pp, n_other, t, feeding_level, ...) {
-  params <- withTherMizerSearchVolume(params, t)
-  mizerPredRate(
-    params, n = n, n_pp = n_pp, n_other = n_other, t = t,
-    feeding_level = feeding_level, ...)
-}
-
-#' Temperature-scaled energy for growth and reproduction
-#'
-#' therMizer implementation of mizer's \code{EReproAndGrowth} rate function.
-#' The assimilation term is calculated from encounter, while maintenance
-#' metabolism is multiplied by a temperature scalar that is aggregated across
-#' realms.
-#'
-#' @inheritParams therMizerPredRate
-#' @param encounter Numeric array of encounter rates, as returned by
-#'   \code{getEncounter()}.
-#'
-#' @returns A numeric matrix with the same dimensions as \code{encounter}.
-#'
-#' @export
-
-therMizerEReproAndGrowth <- function(params, n = NULL, n_pp = NULL,
-                                     n_other = NULL, t = 0, encounter,
-                                     feeding_level, ...) {
-  params <- withTherMizerMetabolism(params, t)
-  mizerEReproAndGrowth(
-    params, n = n, n_pp = n_pp, n_other = n_other, t = t,
-    encounter = encounter, feeding_level = feeding_level, ...)
-}
-
 #' Resource forcing from \code{n_pp_array}
 #'
 #' therMizer resource dynamics function that reads the time-varying plankton
 #' forcing stored in \code{other_params(params)$n_pp_array}.
 #'
-#' @inheritParams therMizerPredRate
+#' @inheritParams scaled_temp_effect
+#' @param ... Unused. Present for compatibility with mizer's resource dynamics
+#'   interface.
 #'
 #' @details The function selects the row corresponding to time \code{t},
 #'   converts the stored log-scale spectrum back to density with

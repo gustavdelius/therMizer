@@ -32,7 +32,11 @@ test_that("upgradeTherParams augments params and honours rate toggles", {
 
   expect_s4_class(upgraded, "MizerParams")
   expect_s4_class(upgraded, "therMizer")
-  expect_true(is.na(upgraded@extensions["therMizer"]))
+  expect_true("therMizer" %in% names(upgraded@extensions))
+  expect_identical(
+    mizer::getRegisteredExtensions()[["therMizer"]],
+    "sizespectrum/therMizer"
+  )
   expect_false(other_params(upgraded)$therMizer$aerobic_effect)
   expect_false(other_params(upgraded)$therMizer$metabolism_effect)
   expect_true(all(c(

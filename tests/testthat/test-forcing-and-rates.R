@@ -29,26 +29,26 @@ test_that("temperature-scaled rate functions collapse to zero outside thermal li
     t = 2000
   )
 
-  encounter <- therMizerEncounter(
+  encounter <- mizer::getEncounter(
     params,
     n = n,
     n_pp = n_pp,
     n_other = n_other,
     t = 2000
   )
-  pred_rate <- therMizerPredRate(
+  pred_rate <- mizer::getPredRate(
     params,
     n = n,
     n_pp = n_pp,
     n_other = n_other,
-    t = 2000,
-    feeding_level = feeding_level
+    t = 2000
   )
-  e_growth <- therMizerEReproAndGrowth(
+  e_growth <- mizer::getEReproAndGrowth(
     params,
-    t = 2000,
-    encounter = encounter,
-    feeding_level = feeding_level
+    n = n,
+    n_pp = n_pp,
+    n_other = n_other,
+    t = 2000
   )
 
   expect_true(all(encounter == 0))

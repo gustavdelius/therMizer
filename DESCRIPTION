@@ -26,11 +26,13 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Collate:
+  therMizer-class.R
   rates.R
   realms.R
   scale_temp_effect.R
   therParams.R
   plots.R
   therMizer-package.R
+  zzz.R
 URL: https://github.com/sizespectrum/therMizer
 Config/roxygen2/version: 8.0.0

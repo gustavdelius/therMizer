@@ -259,23 +259,16 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
     metabolism_effect = isTRUE(metabolism_effect)
   )
 
-  params <- registerTherMizerExtension(params)
-
   ## time dimension
   other_params(params)$t_idx = - as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1])
 
-  return(params)
-}
+  # Record the session's extension chain (therMizer registered itself in
+  # .onLoad) and promote the object to its therMizer marker class so that the
+  # project* methods dispatch during projection.
+  params@extensions <- mizer::getRegisteredExtensions()
+  params <- mizer::coerceToExtensionClass(params)
 
-registerTherMizerExtension <- function(params) {
-  extensions <- params@extensions
-  extensions <- extensions[names(extensions) != "therMizer"]
-  params@extensions <- c(
-    therMizer = NA_character_,
-    extensions
-  )
-  mizer::registerExtensions(params@extensions)
-  mizer::coerceToExtensionClass(params)
+  return(params)
 }
 
 # @title Project thermizer object
