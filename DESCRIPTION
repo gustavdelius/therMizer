@@ -18,10 +18,11 @@ License: GPL-3
 LazyData: true
 Depends:
     R (>= 3.1),
-    mizer (>= 2.5.4.9124)
+    mizer (>= 3.3.0)
 Imports:
     ggplot2,
-    reshape2
+    reshape2,
+    utils
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -35,4 +36,4 @@ Collate:
   therMizer-package.R
   zzz.R
 URL: https://github.com/sizespectrum/therMizer
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

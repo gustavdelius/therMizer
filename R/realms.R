@@ -51,7 +51,10 @@
 #' @export
 #'
 
-setVerticality <- function(params, vertical_migration_array, exposure_array = NULL){
+setVerticality <- function(params, vertical_migration_array,
+                           exposure_array = NULL,
+                           info_level = default_info_level()){
+ with_info_level(info_level = info_level, {
 
   species_names <- as.character(params@species_params$species)
   realm_names <- dimnames(vertical_migration_array)$realm
@@ -68,7 +71,10 @@ setVerticality <- function(params, vertical_migration_array, exposure_array = NU
                               dimnames = list("time" = names(ocean_temp_array),
                                               "realm" = dimnames(vertical_migration_array)[[1]]))
     other_params(params)$ocean_temp <- ocean_temp_array
-    message("ocean_temp_array was extended to a matrix with the same names as the vertical_migration_array.")
+    signal_info("ocean_temp_array",
+                paste("ocean_temp_array was extended to a matrix with the same",
+                      "names as the vertical_migration_array."),
+                level = 1)
   }
 
   if(is.null(exposure_array) & !isTRUE(all.equal(dimnames(ocean_temp_array)[[2]],dimnames(vertical_migration_array)[[1]])))
@@ -124,7 +130,6 @@ setVerticality <- function(params, vertical_migration_array, exposure_array = NU
   }
   other_params(params)$exposure <- exposure_array
 
-
-
   return(params)
+ })
 }

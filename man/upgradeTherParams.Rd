@@ -13,7 +13,8 @@ upgradeTherParams(
   vertical_migration_array = NULL,
   exposure_array = NULL,
   aerobic_effect = TRUE,
-  metabolism_effect = TRUE
+  metabolism_effect = TRUE,
+  info_level = default_info_level()
 )
 }
 \arguments{
@@ -55,6 +56,11 @@ is \code{TRUE}.}
 \item{metabolism_effect}{Logical. If \code{TRUE}, activate therMizer's
 temperature scaling for maintenance metabolism in the
 energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.}
+
+\item{info_level}{Integer controlling how much therMizer reports about the
+choices it made on your behalf, in the same way as mizer's own setup
+functions. Use \code{0} for silence. Default is
+\code{\link[mizer]{default_info_level}()}.}
 }
 \value{
 The modified \code{params} object, ready to use with therMizer.
@@ -65,7 +71,13 @@ plankton forcing, and realm structure to a standard
 \code{MizerParams} object.
 }
 \details{
-If \code{vertical_migration_array} is omitted, a default realm
+Because therMizer scales the encounter rate with temperature, the
+  current value of the calculated species parameter \code{gamma} is declared
+  as a given species parameter, so that mizer does not later recalculate it
+  from an encounter rate that already carries the temperature scalar. Set
+  \code{given_species_params(params)$gamma <- NA} to hand it back to mizer.
+
+  If \code{vertical_migration_array} is omitted, a default realm
   allocation is constructed from the available temperature data. If
   \code{n_pp_array} is supplied, the resource dynamics function is set to
   \code{\link{plankton_forcing}()}. The returned object also stores a time

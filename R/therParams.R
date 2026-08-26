@@ -68,8 +68,18 @@ decimal_year <- function(date_vec) {
 #' @param metabolism_effect Logical. If \code{TRUE}, activate therMizer's
 #'   temperature scaling for maintenance metabolism in the
 #'   energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.
+#' @param info_level Integer controlling how much therMizer reports about the
+#'   choices it made on your behalf, in the same way as mizer's own setup
+#'   functions. Use \code{0} for silence. Default is
+#'   \code{\link[mizer]{default_info_level}()}.
 #'
-#' @details If \code{vertical_migration_array} is omitted, a default realm
+#' @details Because therMizer scales the encounter rate with temperature, the
+#'   current value of the calculated species parameter \code{gamma} is declared
+#'   as a given species parameter, so that mizer does not later recalculate it
+#'   from an encounter rate that already carries the temperature scalar. Set
+#'   \code{given_species_params(params)$gamma <- NA} to hand it back to mizer.
+#'
+#'   If \code{vertical_migration_array} is omitted, a default realm
 #'   allocation is constructed from the available temperature data. If
 #'   \code{n_pp_array} is supplied, the resource dynamics function is set to
 #'   \code{\link{plankton_forcing}()}. The returned object also stores a time
@@ -129,8 +139,29 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
                               vertical_migration_array = NULL,
                               exposure_array = NULL,
                               aerobic_effect = TRUE,
-                              metabolism_effect = TRUE){
+                              metabolism_effect = TRUE,
+                              info_level = default_info_level()){
+ with_info_level(info_level = info_level, {
   no_sp <- length(species_params(params)$species)
+
+  ## Protect `gamma` from being recalculated through the temperature scaling.
+  ## `gamma` is a calculated species parameter, so mizer recomputes it from the
+  ## encounter rate every time the species parameters are rebuilt. Once the
+  ## object is a therMizer object that encounter rate is temperature-scaled, so
+  ## the recalculated `gamma` would absorb the temperature scalar of whatever
+  ## time step it happened to be evaluated at, and is undefined wherever that
+  ## scalar is zero. Declaring the current, temperature-independent value as
+  ## given keeps the model as it is. To let `gamma` follow `f0` again, set
+  ## `given_species_params(params)$gamma <- NA`.
+  gamma_now <- species_params(params)$gamma
+  gamma_given <- given_species_params(params)$gamma
+  if (!is.null(gamma_now) && (is.null(gamma_given) || anyNA(gamma_given))) {
+    signal_info("gamma",
+                paste("Keeping the current `gamma` fixed, so that it is not",
+                      "recalculated from the temperature-scaled encounter rate."),
+                level = 1)
+    given_species_params(params)$gamma <- gamma_now
+  }
 
   ## temperature parameters
   if(is.null(temp_min)){
@@ -156,7 +187,9 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
   if(is.vector(ocean_temp_array)){
     ## check dimnames
     if(is.null(names(ocean_temp_array))){
-      warning("ocean_temp_array has no dates. They are assumed to be successive years staring from 0.")
+      signal_info("ocean_temp_array",
+                  "`ocean_temp_array` has no dates. They are assumed to be successive years starting from 0.",
+                  level = 1, severity = "warning")
       names(ocean_temp_array) <- sprintf("%04d", seq(0, length.out = length(ocean_temp_array)))
     }
     date_vec <- names(ocean_temp_array)
@@ -190,9 +223,12 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
       stop("The size dimension of the n_pp_array must be the same as w_full.")
 
     if(!identical(dimnames(n_pp_array)[[2]],params@w_full)){
-      warning("The dimnames of the second dimension of n_pp_array are not the same
-      as the ones in w_full. Since the dimension size is the same, the dimnames
-      have been replaced by w_full.")
+      signal_info("n_pp_array",
+                  paste("The dimnames of the second dimension of `n_pp_array`",
+                        "are not the same as the ones in `w_full`. Since the",
+                        "dimension size is the same, the dimnames have been",
+                        "replaced by `w_full`."),
+                  level = 1, severity = "warning")
       dimnames(n_pp_array)[[2]] <- params@w_full
     }
 
@@ -222,7 +258,9 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
             dimnames = list("realm" = vertical_names,
                             "species" = params@species_params$species,
                             "w" = params@w))
-    message("exposure_array used to create vertical_migration_array.")
+    signal_info("vertical_migration_array",
+                "`exposure_array` used to create `vertical_migration_array`.",
+                level = 1)
     params <- setVerticality(params, vertical_migration_array, exposure_array)
   } else {
     if(is.null(dim(ocean_temp_array))){
@@ -230,14 +268,19 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
                                  length(params@species_params$species)-1),1),length(params@w))
       vertical_names <- params@species_params$species
       vertical_dim <- c(rep(length(params@species_params$species),2), length(params@w))
-      message("Assuming one realm per species to create vertical_migration_array.")
+      signal_info("vertical_migration_array",
+                  "Assuming one realm per species to create `vertical_migration_array`.",
+                  level = 1)
     } else if(!isTRUE(all.equal(dimnames(ocean_temp_array)[[2]],params@species_params$species))){
       vertical_fill <- 1/length(dimnames(ocean_temp_array)[[2]])
       vertical_names <- dimnames(ocean_temp_array)[[2]]
       vertical_dim <- c(dim(ocean_temp_array)[2],
                         length(params@species_params$species),
                         length(params@w))
-      message("Your realm names don't match your species names, so species are assumed to spend equal time in all realms.")
+      signal_info("vertical_migration_array",
+                  paste("Your realm names don't match your species names, so",
+                        "species are assumed to spend equal time in all realms."),
+                  level = 1)
     } else {
       vertical_fill <- rep(c(rep(c(1,rep(0,length(params@species_params$species))),
                                  length(params@species_params$species)-1),1),length(params@w))
@@ -262,13 +305,23 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
   ## time dimension
   other_params(params)$t_idx = - as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1])
 
-  # Record the session's extension chain (therMizer registered itself in
-  # .onLoad) and promote the object to its therMizer marker class so that the
-  # project* methods dispatch during projection.
-  params@extensions <- mizer::getRegisteredExtensions()
+  # Record that therMizer has been applied to this object, stamping the
+  # installed package version the first time and preserving the existing stamp
+  # afterwards, then promote the object to its therMizer marker class so that
+  # the project* methods dispatch during projection. `recordExtension()` takes
+  # the installation requirement from the chain therMizer registered itself in
+  # from `.onLoad`. The whole active registry must not be copied in, because
+  # another extension can be loaded without having been applied to this model.
+  version <- if ("therMizer" %in% names(params@extensions)) {
+    NULL
+  } else {
+    as.character(packageVersion("therMizer"))
+  }
+  params <- mizer::recordExtension(params, "therMizer", version = version)
   params <- mizer::coerceToExtensionClass(params)
 
   return(params)
+ })
 }
 
 # @title Project thermizer object

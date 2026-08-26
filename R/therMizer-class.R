@@ -1,13 +1,12 @@
-### S4 marker classes for the therMizer extension
-#
-# These classes carry no new slots; they exist only as dispatch labels so that
-# mizer's generic functions and the project* rate generics can dispatch to
-# therMizer's methods. All therMizer-specific state lives in
-# other_params(params). See the "Creating a mizer extension package" vignette in
-# mizer for the rationale.
-
-#' @export
-setClass("therMizer", contains = "MizerParams")
-
-#' @export
-setClass("therMizerSim", contains = "MizerSim")
+#' therMizer marker classes
+#'
+#' S4 marker subclasses of `MizerParams` and `MizerSim` that enable the S3
+#' dispatch used by the `projectEncounter()`, `projectPredRate()` and
+#' `projectEReproAndGrowth()` methods defined in this package. They add no
+#' slots and are created by mizer when the package is loaded, not by a
+#' `setClass()` call here, so that therMizer can be chained with other mizer
+#' extension packages in either load order.
+#'
+#' @name therMizer-class
+#' @keywords internal
+NULL

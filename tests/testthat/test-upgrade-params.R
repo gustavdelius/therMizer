@@ -37,6 +37,8 @@ test_that("upgradeTherParams augments params and honours rate toggles", {
     mizer::getRegisteredExtensions()[["therMizer"]],
     "sizespectrum/therMizer"
   )
+  expect_equal(upgraded@extensions$therMizer[["version"]],
+               as.character(utils::packageVersion("therMizer")))
   expect_false(other_params(upgraded)$therMizer$aerobic_effect)
   expect_false(other_params(upgraded)$therMizer$metabolism_effect)
   expect_true(all(c(
@@ -60,4 +62,49 @@ test_that("upgradeTherParams installs plankton forcing when n_pp_array is suppli
 
   expect_equal(params@resource_dynamics, "plankton_forcing")
   expect_equal(dim(other_params(params)$n_pp_array), c(3, length(params@w_full)))
+})
+
+test_that("info_level controls what upgradeTherParams reports", {
+  params <- make_base_params()
+  limits <- make_temp_limits()
+
+  args <- list(
+    params = params,
+    temp_min = limits$temp_min,
+    temp_max = limits$temp_max,
+    ocean_temp_array = c(3, 6, 9)
+  )
+
+  # Unnamed temperatures make therMizer invent dates, which it reports
+  expect_warning(suppressMessages(do.call(upgradeTherParams, args)),
+                 "assumed to be successive years")
+  expect_silent(do.call(upgradeTherParams, c(args, list(info_level = 0))))
+})
+
+test_that("upgradeTherParams keeps gamma out of the temperature-scaled rebuild", {
+  base <- make_base_params()
+  limits <- make_temp_limits()
+  ocean_temp_array <- c("2000" = 5, "2001" = 6, "2002" = 7)
+
+  upgrade <- function(params) {
+    suppressWarnings(suppressMessages(
+      upgradeTherParams(params,
+                        temp_min = limits$temp_min,
+                        temp_max = limits$temp_max,
+                        ocean_temp_array = ocean_temp_array)))
+  }
+
+  once <- upgrade(base)
+  # sp2 sits at its lower thermal limit at t = 2000, so a gamma recalculated
+  # from the temperature-scaled encounter rate would be infinite
+  twice <- upgrade(once)
+
+  expect_equal(species_params(once)$gamma, species_params(base)$gamma)
+  expect_equal(species_params(twice)$gamma, species_params(base)$gamma)
+  expect_false(anyNA(given_species_params(once)$gamma))
+
+  # An ordinary species parameter change no longer disturbs gamma either
+  changed <- once
+  species_params(changed)$beta <- c(120, 120)
+  expect_equal(species_params(changed)$gamma, species_params(base)$gamma)
 })
