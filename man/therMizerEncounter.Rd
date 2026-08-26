@@ -2,17 +2,27 @@
 % Please edit documentation in R/rates.R
 \name{therMizerEncounter}
 \alias{therMizerEncounter}
-\title{therMizerEncounter}
+\title{Temperature-scaled encounter rate}
 \usage{
 therMizerEncounter(params, t, ...)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \code{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
 
-\item{...}{To pass further arguments down to the function}
+\item{...}{Additional arguments passed through by mizer's internal rate
+function machinery.}
+}
+\value{
+A numeric matrix with the same dimensions as the value returned by
+  \code{mizer::mizerEncounter()}.
 }
 \description{
-Calculates the temperature-scaled encounter rate.
+therMizer implementation of mizer's \code{Encounter} rate function.
+It multiplies the default encounter rate by
+\code{\link{scaled_temp_effect}()}.
 }

@@ -2,16 +2,50 @@
 % Please edit documentation in R/scale_temp_effect.R
 \name{scaled_temp_effect}
 \alias{scaled_temp_effect}
-\title{Temperature scaling factor}
+\title{Calculate the encounter and predation temperature scalar}
 \usage{
 scaled_temp_effect(params, t)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \code{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
+}
+\value{
+A numeric matrix with species in rows and size classes in columns.
 }
 \description{
-Calculate the temperature scaling factor for the encounter rate
-and predation rate.
+Evaluate the temperature-dependent scalar applied to encounter and predation
+processes at time \code{t}.
+}
+\details{
+The scalar is calculated separately for each realm, multiplied by
+  the corresponding exposure and vertical migration weights, and then summed
+  across realms. Values are set to 0 outside each species' thermal limits.
+}
+\examples{
+\donttest{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+params <- suppressWarnings(suppressMessages(
+  upgradeTherParams(params,
+    temp_min = c(-2, 5), temp_max = c(12, 18),
+    ocean_temp_array = c("2000" = 5, "2001" = 6, "2002" = 7))))
+# Returns a species x size matrix of temperature scalars
+ste <- scaled_temp_effect(params, t = 2001)
+dim(ste)  # nrow = n_species, ncol = n_size_classes
+}
+
+}
+\seealso{
+\code{\link{upgradeTherParams}()},
+  \code{\link{setEncounterPredScale}()}, and
+  \code{\link{setVerticality}()}.
 }

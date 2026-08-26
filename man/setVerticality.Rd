@@ -2,26 +2,69 @@
 % Please edit documentation in R/realms.R
 \name{setVerticality}
 \alias{setVerticality}
-\title{Add realms to params object.}
+\title{Add realm-specific temperature structure to a therMizer model}
 \usage{
 setVerticality(params, vertical_migration_array, exposure_array = NULL)
 }
 \arguments{
-\item{params}{A mizer params object}
+\item{params}{A \code{MizerParams} object to augment.}
 
-\item{vertical_migration_array}{An array of number of realms x number of
-species x number of sizes filled with the time ratio of each species spending
-in each realms. Values must be positive and the sum of every realms per
-species per size must be one. Default is species spending equal time between
-all realms.}
+\item{vertical_migration_array}{Optional array of dimensions
+realm x species x size giving the fraction of time each species spends in
+each realm at each size. Values must be non-negative and sum to 1 across
+realms for every species-size combination.}
 
-\item{exposure_array}{An array of number of realms x species filled with values
-from 0 to 1. This array scales the effect of temperature for each species per
-realms. Default is ones.}
+\item{exposure_array}{Optional array of dimensions realm x species with
+values between 0 and 1 describing how strongly each species is exposed to
+temperature in each realm.}
+}
+\value{
+The modified \code{params} object with
+  \code{other_params(params)$vertical_migration} and
+  \code{other_params(params)$exposure} filled in.
 }
 \description{
-set different species specific realms with different temperatures
+Store vertical migration and exposure information in a
+\code{MizerParams} object so temperature effects can be combined across
+multiple realms.
 }
 \details{
-Vertical integration functions
+If \code{ocean_temp_array} has no realm dimension, it is expanded to
+  one column per realm in \code{vertical_migration_array}. When
+  \code{exposure_array} is omitted, exposure is inferred from whether a
+  species occupies a realm at any size class.
+}
+\examples{
+\donttest{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+species_params(params)$temp_min <- c(-2, 5)
+species_params(params)$temp_max <- c(12, 18)
+
+# Store a two-realm temperature array in params before calling setVerticality
+ocean_temp <- array(
+  c(4, 8, 5, 9, 6, 10),
+  dim = c(3, 2),
+  dimnames = list(time = c("2000", "2001", "2002"),
+                  realm = c("surface", "deep")))
+other_params(params)$ocean_temp <- ocean_temp
+
+# sp1 stays in the surface realm; sp2 stays in the deep realm
+vm <- array(0,
+  dim = c(2, 2, length(params@w)),
+  dimnames = list(realm = c("surface", "deep"),
+                  sp = c("sp1", "sp2"), w = params@w))
+vm["surface", "sp1", ] <- 1
+vm["deep",    "sp2", ] <- 1
+
+params <- setEncounterPredScale(params)
+params <- setMetabTher(params)
+params <- setVerticality(params, vm)
+str(other_params(params)$exposure)
+}
+
 }

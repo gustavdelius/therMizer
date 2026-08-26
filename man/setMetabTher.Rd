@@ -2,14 +2,35 @@
 % Please edit documentation in R/scale_temp_effect.R
 \name{setMetabTher}
 \alias{setMetabTher}
-\title{Metabolism temperature}
+\title{Set metabolism temperature scaling parameters}
 \usage{
 setMetabTher(params)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \code{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
+}
+\value{
+The modified \code{params} object with
+  \code{species_params(params)$metab_min} and
+  \code{species_params(params)$metab_range} filled in.
 }
 \description{
-Determine the minimum, maximum, and range of value for the
-effect of temperature on metabolism.
+Compute the minimum and range of the Arrhenius-style metabolism response over
+each species' thermal range. These values are later used to scale metabolic
+effects between 0 and 1.
+}
+\examples{
+params <- suppressMessages(
+  mizer::newMultispeciesParams(
+    data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+               k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+               beta = c(100, 100), sigma = c(2, 2)),
+    no_w = 16))
+species_params(params)$temp_min <- c(-2, 5)
+species_params(params)$temp_max <- c(12, 18)
+params <- setMetabTher(params)
+species_params(params)$metab_min
+species_params(params)$metab_range
+
 }

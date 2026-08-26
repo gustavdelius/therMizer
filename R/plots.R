@@ -1,7 +1,8 @@
 # scripts containing all plot functions of the package
 
 # to appease R CMD checks
-globalVariables(c("temperature", "scalar","Type"))
+utils::globalVariables(c("Scalar", "Species", "Time", "Type", "scalar",
+                         "temperature"))
 
 # common theme for the package
 therTheme <- function(){
@@ -13,16 +14,44 @@ therTheme <- function(){
   )
 }
 
-#' @title plot thermal performance.
+#' Plot thermal performance curves
 #'
-#' @description Take a look at the thermal performance of the species.
+#' Plot the encounter and metabolic temperature response curves implied by the
+#' species-level thermal parameters stored in \code{params}.
 #'
-#' @inheritParams upgradeTherParams
+#' @param params A therMizer-enabled \code{MizerParams} object
+#'   containing species thermal limits and derived scaling parameters.
 #'
-#' @param return_data Boolean value allowing to return the data frame used for
-#' the plot instead of the plot itself. Default is FALSE.
-#' @param resolution Numeric value which determines the step-width between each
-#' calculation of the species' thermal performance. Default is 0.2.
+#' @param return_data Logical. If \code{TRUE}, return the long-format data frame
+#'   used to build the plot instead of a \code{ggplot2} object. Default is
+#'   \code{FALSE}.
+#' @param resolution Numeric step size, in degrees C, between temperature values
+#'   used to evaluate the curves. Default is \code{0.2}.
+#'
+#' @returns Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+#'   data frame with columns \code{temperature}, \code{Species},
+#'   \code{scalar}, and \code{Type}.
+#'
+#' @seealso \code{\link{plotTherScalar}()}.
+#'
+#' @examples
+#' \donttest{
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' params <- suppressWarnings(suppressMessages(
+#'   upgradeTherParams(params,
+#'     temp_min = c(-2, 5), temp_max = c(12, 18),
+#'     ocean_temp_array = c("2000" = 5))))
+#' plotTherPerformance(params)
+#'
+#' # Return the underlying data instead of a plot
+#' df <- plotTherPerformance(params, return_data = TRUE)
+#' head(df)
+#' }
 #'
 #' @export
 
@@ -110,18 +139,49 @@ plotTherPerformance <- function(params, resolution = .2, return_data = FALSE){
 }
 
 
-#' @title plotTherScalar
+#' Plot time-varying thermal scalars
 #'
-#' @description Plot the scalar value affecting the encounter rate and metabolsim
-#' of each species throughout the provided temperature in ocean_temp_array.
+#' Plot the encounter and metabolism scalars experienced by each species
+#' through time based on the temperature forcing stored in
+#' \code{other_params(params)$ocean_temp}.
 #'
 #' @inheritParams plotTherPerformance
 #'
-#' @param species A character string. Select of specific species to display. It
-#' has to correspond to one of the species name in the mizerParams object.
-#' Default is NULL.
-#' @param species_panel Boolean value. If set to TRUE, the plot will be a panel
-#' of the species. Disabled if the argument species is not NULL. Default is TRUE.
+#' @param species Optional character string giving a single species name to
+#'   display. It must match one of the species names in \code{params}. Default
+#'   is \code{NULL}, which keeps all species.
+#' @param species_panel Logical. If \code{TRUE} and \code{species} is
+#'   \code{NULL}, plot each species in a separate panel. Ignored when
+#'   \code{species} is supplied. Default is \code{TRUE}.
+#'
+#' @returns Either a \code{ggplot2} object or, when \code{return_data = TRUE}, a
+#'   data frame with columns \code{Time}, \code{Species}, \code{Scalar}, and
+#'   \code{Type}.
+#'
+#' @seealso \code{\link{plotTherPerformance}()}.
+#'
+#' @examples
+#' \donttest{
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' params <- suppressWarnings(suppressMessages(
+#'   upgradeTherParams(params,
+#'     temp_min = c(-2, 5), temp_max = c(12, 18),
+#'     ocean_temp_array = c("2000" = 5, "2001" = 6, "2002" = 7))))
+#'
+#' # Plot both species in separate panels
+#' plotTherScalar(params)
+#'
+#' # Plot a single species
+#' plotTherScalar(params, species = "sp1")
+#'
+#' # Overlay both species on one panel
+#' plotTherScalar(params, species_panel = FALSE)
+#' }
 #'
 #' @export
 
@@ -132,9 +192,7 @@ plotTherScalar <- function(params, species = NULL, species_panel = TRUE, return_
   scalar_met <- NULL
   for(t in as.numeric(dimnames(other_params(params)$ocean_temp)[[1]])){
     # encounter
-    scalar_en <- scaled_temp_effect(params,t) %>%
-      apply(1,mean) %>%
-      rbind(scalar_en,.)
+    scalar_en <- rbind(scalar_en, apply(scaled_temp_effect(params,t), 1, mean))
 
     # Metabolism
     temp_effect_metab_realms <- array(NA, dim = c(dim(other_params(params)$vertical_migration)), dimnames = c(dimnames(other_params(params)$vertical_migration)))
@@ -159,21 +217,23 @@ plotTherScalar <- function(params, species = NULL, species_panel = TRUE, return_
 
       temp_effect_metab_realms[r,,] <- temp_effect_metabolism_r*other_params(params)$exposure[r,]*other_params(params)$vertical_migration[r,,]
     }
-    scalar_met <- colSums(temp_effect_metab_realms) %>%
-      apply(1,mean) %>%
-      rbind(scalar_met,.)
+    scalar_met <- rbind(scalar_met, apply(colSums(temp_effect_metab_realms), 1, mean))
   }
   rownames(scalar_en) <- rownames(scalar_met) <-as.numeric(dimnames(other_params(params)$ocean_temp)[[1]])
 
-  plot_dat2 <- reshape2::melt(scalar_met) %>%
-    mutate(Type = "Metabolism")
-  plot_dat <- reshape2::melt(scalar_en) %>%
-    mutate(Type = "Encounter") %>%
-    rbind(plot_dat2) %>%
-    rename(Time = Var1, Species = Var2, Scalar = value)
+  plot_dat2 <- reshape2::melt(scalar_met)
+  plot_dat2$Type <- "Metabolism"
+  plot_dat <- reshape2::melt(scalar_en)
+  plot_dat$Type <- "Encounter"
+  plot_dat <- rbind(plot_dat, plot_dat2)
+  names(plot_dat)[names(plot_dat) == "Var1"] <- "Time"
+  names(plot_dat)[names(plot_dat) == "Var2"] <- "Species"
+  names(plot_dat)[names(plot_dat) == "value"] <- "Scalar"
 
-  if(!is.null(species)) plot_dat <- filter(plot_dat, Species == species) %>%
-    mutate(Species = as.character(Species))
+  if (!is.null(species)) {
+    plot_dat <- plot_dat[plot_dat$Species == species, ]
+    plot_dat$Species <- as.character(plot_dat$Species)
+  }
 
   p <- ggplot(plot_dat, aes(x = Time, y = Scalar)) +
     scale_y_continuous(limits = c(0,1), name = "Scalar value") +

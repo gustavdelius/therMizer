@@ -2,27 +2,41 @@
 % Please edit documentation in R/rates.R
 \name{therMizerPredRate}
 \alias{therMizerPredRate}
-\title{therMizerPredRate}
+\title{Temperature-scaled predation mortality}
 \usage{
 therMizerPredRate(params, n, n_pp, n_other, t, feeding_level, ...)
 }
 \arguments{
-\item{params}{An object of class \linkS4class{MizerParams}.}
+\item{params}{A \code{MizerParams} object that has been prepared for
+therMizer, typically with \code{\link{upgradeTherParams}()}.}
 
-\item{n}{A matrix of species abundances (species x size).}
+\item{n}{Numeric matrix of species abundances with species in rows and size
+classes in columns.}
 
-\item{n_pp}{A vector of the resource abundance by size.}
+\item{n_pp}{Numeric vector giving the background resource abundance by size.}
 
-\item{n_other}{A list of abundances for other dynamical components of the
-ecosystem.}
+\item{n_other}{List of abundances for any other dynamic ecosystem
+components.}
 
-\item{t}{Time}
+\item{t}{Numeric time in the same units as the first dimension of
+\code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+supplied time series, the temperature series is recycled cyclically.}
 
-\item{feeding_level}{An array (species x size) with the feeding level as
-calculated by getFeedingLevel().}
+\item{feeding_level}{Numeric array of feeding levels, as returned by
+\code{getFeedingLevel()}.}
 
-\item{...}{To pass further arguments down to the function}
+\item{...}{Additional arguments passed through by mizer's internal rate
+function machinery.}
+}
+\value{
+A numeric array with the same structure expected from mizer's
+  \code{PredRate} rate function.
 }
 \description{
-Calculates the temperature-scaled predation rate.
+therMizer implementation of mizer's \code{PredRate} rate function.
+It applies the encounter temperature scalar to predation mortality.
+}
+\details{
+If \code{params} uses a custom predation kernel, the function falls
+  back to the non-FFT implementation used by older versions of mizer.
 }

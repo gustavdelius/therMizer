@@ -1,12 +1,27 @@
 ### Functions related to creating the scaling parameters
 
-#' @title Set encounter scalar
+#' Set the encounter and predation scaling constant
 #'
-#' @description Creates the encounterpred_scale parameter which is
-#' used for scaling encounter and mortality rates and set the temperature scalar
-#' between 0 and 1.
+#' Compute the species-specific \code{encounterpred_scale} value used to
+#' normalise the encounter and predation temperature response so that the
+#' resulting scalar varies between 0 and 1 within each species' thermal range.
 #'
 #' @inheritParams scaled_temp_effect
+#'
+#' @returns The modified \code{params} object with
+#'   \code{species_params(params)$encounterpred_scale} filled in.
+#'
+#' @examples
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' species_params(params)$temp_min <- c(-2, 5)
+#' species_params(params)$temp_max <- c(12, 18)
+#' params <- setEncounterPredScale(params)
+#' species_params(params)$encounterpred_scale
 #'
 #' @export
 #'
@@ -27,12 +42,30 @@ setEncounterPredScale <- function(params){
   return(params)
 }
 
-#' @title Metabolism temperature
+#' Set metabolism temperature scaling parameters
 #'
-#' @description Determine the minimum, maximum, and range of value for the
-#' effect of temperature on metabolism.
+#' Compute the minimum and range of the Arrhenius-style metabolism response over
+#' each species' thermal range. These values are later used to scale metabolic
+#' effects between 0 and 1.
 #'
 #' @inheritParams scaled_temp_effect
+#'
+#' @returns The modified \code{params} object with
+#'   \code{species_params(params)$metab_min} and
+#'   \code{species_params(params)$metab_range} filled in.
+#'
+#' @examples
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' species_params(params)$temp_min <- c(-2, 5)
+#' species_params(params)$temp_max <- c(12, 18)
+#' params <- setMetabTher(params)
+#' species_params(params)$metab_min
+#' species_params(params)$metab_range
 #'
 #' @export
 #'
@@ -48,13 +81,43 @@ setMetabTher <- function(params){
 }
 
 
-#' @title Temperature scaling factor
+#' Calculate the encounter and predation temperature scalar
 #'
-#' @description Calculate the temperature scaling factor for the encounter rate
-#' and predation rate.
+#' Evaluate the temperature-dependent scalar applied to encounter and predation
+#' processes at time \code{t}.
 #'
-#' @param params An object of class \linkS4class{MizerParams}.
-#' @param t Time
+#' @param params A \code{MizerParams} object that has been prepared for
+#'   therMizer, typically with \code{\link{upgradeTherParams}()}.
+#' @param t Numeric time in the same units as the first dimension of
+#'   \code{other_params(params)$ocean_temp}. If \code{t} falls outside the
+#'   supplied time series, the temperature series is recycled cyclically.
+#'
+#' @details The scalar is calculated separately for each realm, multiplied by
+#'   the corresponding exposure and vertical migration weights, and then summed
+#'   across realms. Values are set to 0 outside each species' thermal limits.
+#'
+#' @returns A numeric matrix with species in rows and size classes in columns.
+#'
+#' @seealso \code{\link{upgradeTherParams}()},
+#'   \code{\link{setEncounterPredScale}()}, and
+#'   \code{\link{setVerticality}()}.
+#'
+#' @examples
+#' \donttest{
+#' params <- suppressMessages(
+#'   mizer::newMultispeciesParams(
+#'     data.frame(species = c("sp1", "sp2"), w_inf = c(100, 1000),
+#'                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
+#'                beta = c(100, 100), sigma = c(2, 2)),
+#'     no_w = 16))
+#' params <- suppressWarnings(suppressMessages(
+#'   upgradeTherParams(params,
+#'     temp_min = c(-2, 5), temp_max = c(12, 18),
+#'     ocean_temp_array = c("2000" = 5, "2001" = 6, "2002" = 7))))
+#' # Returns a species x size matrix of temperature scalars
+#' ste <- scaled_temp_effect(params, t = 2001)
+#' dim(ste)  # nrow = n_species, ncol = n_size_classes
+#' }
 #'
 #' @export
 #'
