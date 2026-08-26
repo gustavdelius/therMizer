@@ -14,7 +14,8 @@ plankton_forcing(params, t, ...)
 - params:
 
   A `MizerParams` object that has been prepared for therMizer, typically
-  with [`upgradeTherParams()`](upgradeTherParams.md).
+  with
+  [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md).
 
 - t:
 

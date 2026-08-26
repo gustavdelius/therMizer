@@ -129,7 +129,8 @@ to 1 for all realms and species and therefore has no effects.
 ### Temperature functions
 
 Temperature affects species within mizer through mizer’s extension
-chain. Calling [`upgradeTherParams()`](reference/upgradeTherParams.md)
+chain. Calling
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md)
 records therMizer in `params@extensions` and activates projection hooks
 that can compose with hooks from other extension packages. The encounter
 and predation-rate calculations are temperature-scaled when

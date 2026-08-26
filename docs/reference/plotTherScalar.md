@@ -45,7 +45,7 @@ with columns `Time`, `Species`, `Scalar`, and `Type`.
 
 ## See also
 
-[`plotTherPerformance()`](plotTherPerformance.md).
+[`plotTherPerformance()`](https://sizespectrum.org/therMizer/reference/plotTherPerformance.md).
 
 ## Examples
 

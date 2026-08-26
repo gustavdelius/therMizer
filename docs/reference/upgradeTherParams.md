@@ -49,7 +49,8 @@ upgradeTherParams(
   Optional vector, matrix, or array of plankton forcing with dimensions
   time x size. The time dimension must match `ocean_temp_array`, and the
   size dimension must match `params@w_full`. Values are interpreted on
-  the log10 scale used by [`plankton_forcing()`](plankton_forcing.md).
+  the log10 scale used by
+  [`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
 
 - vertical_migration_array:
 
@@ -97,16 +98,18 @@ from an encounter rate that already carries the temperature scalar. Set
 If `vertical_migration_array` is omitted, a default realm allocation is
 constructed from the available temperature data. If `n_pp_array` is
 supplied, the resource dynamics function is set to
-[`plankton_forcing()`](plankton_forcing.md). The returned object also
-stores a time offset in `other_params(params)$t_idx` so therMizer can
-align mizer's simulation time with the supplied forcing series.
+[`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
+The returned object also stores a time offset in
+`other_params(params)$t_idx` so therMizer can align mizer's simulation
+time with the supplied forcing series.
 
 ## See also
 
-[`setVerticality()`](setVerticality.md),
-[`setEncounterPredScale()`](setEncounterPredScale.md),
-[`setMetabTher()`](setMetabTher.md), and
-[`plankton_forcing()`](plankton_forcing.md).
+[`setVerticality()`](https://sizespectrum.org/therMizer/reference/setVerticality.md),
+[`setEncounterPredScale()`](https://sizespectrum.org/therMizer/reference/setEncounterPredScale.md),
+[`setMetabTher()`](https://sizespectrum.org/therMizer/reference/setMetabTher.md),
+and
+[`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
 
 ## Examples
 

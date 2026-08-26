@@ -8,34 +8,36 @@ therMizer’s temperature forcing and realm structure. The result is a
 metabolism rates mizer dispatches to automatically during
 [`project()`](https://sizespectrum.org/mizer/reference/project.html).
 
-- [`upgradeTherParams()`](upgradeTherParams.md) :
+- [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md)
+  :
 
   Upgrade a `MizerParams` object for therMizer
 
-- [`setVerticality()`](setVerticality.md) : Add realm-specific
-  temperature structure to a therMizer model
+- [`setVerticality()`](https://sizespectrum.org/therMizer/reference/setVerticality.md)
+  : Add realm-specific temperature structure to a therMizer model
 
 ## Scaling parameters
 
 Functions that compute the species-specific constants used to normalise
 the encounter/predation and metabolism temperature responses to the \[0,
 1\] interval. These are called automatically by
-[`upgradeTherParams()`](../reference/upgradeTherParams.md) but are also
-exported for direct use.
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md)
+but are also exported for direct use.
 
-- [`setEncounterPredScale()`](setEncounterPredScale.md) : Set the
-  encounter and predation scaling constant
-- [`setMetabTher()`](setMetabTher.md) : Set metabolism temperature
-  scaling parameters
+- [`setEncounterPredScale()`](https://sizespectrum.org/therMizer/reference/setEncounterPredScale.md)
+  : Set the encounter and predation scaling constant
+- [`setMetabTher()`](https://sizespectrum.org/therMizer/reference/setMetabTher.md)
+  : Set metabolism temperature scaling parameters
 
 ## Resource forcing
 
 The resource dynamics function that reads the time-varying plankton
 spectrum stored in the model.
-[`upgradeTherParams()`](../reference/upgradeTherParams.md) installs it
-automatically when it is given an `n_pp_array`.
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md)
+installs it automatically when it is given an `n_pp_array`.
 
-- [`plankton_forcing()`](plankton_forcing.md) :
+- [`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md)
+  :
 
   Resource forcing from `n_pp_array`
 
@@ -44,21 +46,21 @@ automatically when it is given an `n_pp_array`.
 Functions for inspecting the temperature scalars that therMizer applies
 at each time step.
 
-- [`scaled_temp_effect()`](scaled_temp_effect.md) : Calculate the
-  encounter and predation temperature scalar
+- [`scaled_temp_effect()`](https://sizespectrum.org/therMizer/reference/scaled_temp_effect.md)
+  : Calculate the encounter and predation temperature scalar
 
 ## Visualisation
 
 Plotting functions for exploring species’ thermal performance curves and
 the time-varying temperature scalars they experience.
 
-- [`plotTherPerformance()`](plotTherPerformance.md) : Plot thermal
-  performance curves
-- [`plotTherScalar()`](plotTherScalar.md) : Plot time-varying thermal
-  scalars
+- [`plotTherPerformance()`](https://sizespectrum.org/therMizer/reference/plotTherPerformance.md)
+  : Plot thermal performance curves
+- [`plotTherScalar()`](https://sizespectrum.org/therMizer/reference/plotTherScalar.md)
+  : Plot time-varying thermal scalars
 
 ## Package
 
-- [`therMizer`](therMizer-package.md)
-  [`therMizer-package`](therMizer-package.md) : therMizer: Extends the
-  mizer package with temperature dynamics
+- [`therMizer`](https://sizespectrum.org/therMizer/reference/therMizer-package.md)
+  [`therMizer-package`](https://sizespectrum.org/therMizer/reference/therMizer-package.md)
+  : therMizer: Extends the mizer package with temperature dynamics

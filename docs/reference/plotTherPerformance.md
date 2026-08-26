@@ -33,7 +33,7 @@ with columns `temperature`, `Species`, `scalar`, and `Type`.
 
 ## See also
 
-[`plotTherScalar()`](plotTherScalar.md).
+[`plotTherScalar()`](https://sizespectrum.org/therMizer/reference/plotTherScalar.md).
 
 ## Examples
 

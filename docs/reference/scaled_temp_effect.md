@@ -14,7 +14,8 @@ scaled_temp_effect(params, t)
 - params:
 
   A `MizerParams` object that has been prepared for therMizer, typically
-  with [`upgradeTherParams()`](upgradeTherParams.md).
+  with
+  [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md).
 
 - t:
 
@@ -34,9 +35,10 @@ across realms. Values are set to 0 outside each species' thermal limits.
 
 ## See also
 
-[`upgradeTherParams()`](upgradeTherParams.md),
-[`setEncounterPredScale()`](setEncounterPredScale.md), and
-[`setVerticality()`](setVerticality.md).
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md),
+[`setEncounterPredScale()`](https://sizespectrum.org/therMizer/reference/setEncounterPredScale.md),
+and
+[`setVerticality()`](https://sizespectrum.org/therMizer/reference/setVerticality.md).
 
 ## Examples
 
