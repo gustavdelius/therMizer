@@ -3,7 +3,10 @@
 ## Model setup
 
 Functions for combining a standard mizer `MizerParams` object with
-therMizer’s temperature forcing, realm structure, and rate functions.
+therMizer’s temperature forcing and realm structure. The result is a
+`therMizer` object, whose temperature-scaled encounter, predation and
+metabolism rates mizer dispatches to automatically during
+[`project()`](https://sizespectrum.org/mizer/reference/project.html).
 
 - [`upgradeTherParams()`](upgradeTherParams.md) :
 
@@ -25,22 +28,12 @@ exported for direct use.
 - [`setMetabTher()`](setMetabTher.md) : Set metabolism temperature
   scaling parameters
 
-## Temperature-scaled rate functions
+## Resource forcing
 
-Drop-in replacements for mizer’s built-in rate functions that
-incorporate temperature effects. Registered automatically by
-[`upgradeTherParams()`](../reference/upgradeTherParams.md) and called
-internally by
-[`project()`](https://sizespectrum.org/mizer/reference/project.html).
-
-- [`therMizerEncounter()`](therMizerEncounter.md) : Temperature-scaled
-  encounter rate
-
-- [`therMizerPredRate()`](therMizerPredRate.md) : Temperature-scaled
-  predation mortality
-
-- [`therMizerEReproAndGrowth()`](therMizerEReproAndGrowth.md) :
-  Temperature-scaled energy for growth and reproduction
+The resource dynamics function that reads the time-varying plankton
+spectrum stored in the model.
+[`upgradeTherParams()`](../reference/upgradeTherParams.md) installs it
+automatically when it is given an `n_pp_array`.
 
 - [`plankton_forcing()`](plankton_forcing.md) :
 

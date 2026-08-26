@@ -57,8 +57,6 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 params <- suppressWarnings(suppressMessages(
   upgradeTherParams(params,
     temp_min = c(-2, 5), temp_max = c(12, 18),

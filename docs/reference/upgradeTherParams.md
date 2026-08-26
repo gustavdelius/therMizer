@@ -16,7 +16,8 @@ upgradeTherParams(
   vertical_migration_array = NULL,
   exposure_array = NULL,
   aerobic_effect = TRUE,
-  metabolism_effect = TRUE
+  metabolism_effect = TRUE,
+  info_level = default_info_level()
 )
 ```
 
@@ -65,21 +66,33 @@ upgradeTherParams(
 
 - aerobic_effect:
 
-  Logical. If `TRUE`, replace mizer's default encounter and
-  predation-rate functions with therMizer's temperature-scaled versions.
-  Default is `TRUE`.
+  Logical. If `TRUE`, activate therMizer's temperature scaling for
+  encounter and predation-rate calculations. Default is `TRUE`.
 
 - metabolism_effect:
 
-  Logical. If `TRUE`, replace mizer's default
-  energy-for-growth-and-reproduction function with therMizer's
-  temperature-scaled version. Default is `TRUE`.
+  Logical. If `TRUE`, activate therMizer's temperature scaling for
+  maintenance metabolism in the energy-for-growth-and-reproduction
+  calculation. Default is `TRUE`.
+
+- info_level:
+
+  Integer controlling how much therMizer reports about the choices it
+  made on your behalf, in the same way as mizer's own setup functions.
+  Use `0` for silence. Default is
+  [`default_info_level()`](https://sizespectrum.org/mizer/reference/default_info_level.html).
 
 ## Value
 
 The modified `params` object, ready to use with therMizer.
 
 ## Details
+
+Because therMizer scales the encounter rate with temperature, the
+current value of the calculated species parameter `gamma` is declared as
+a given species parameter, so that mizer does not later recalculate it
+from an encounter rate that already carries the temperature scalar. Set
+`given_species_params(params)$gamma <- NA` to hand it back to mizer.
 
 If `vertical_migration_array` is omitted, a default realm allocation is
 constructed from the available temperature data. If `n_pp_array` is
@@ -105,8 +118,6 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 
 # Minimal usage: constant temperature, one realm per species
 params <- suppressWarnings(suppressMessages(

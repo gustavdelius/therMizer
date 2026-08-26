@@ -11,7 +11,7 @@ MizerParams object."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">therMizer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,8 @@ plankton forcing, and realm structure to a standard
 <span>  vertical_migration_array <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exposure_array <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  aerobic_effect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  metabolism_effect <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  metabolism_effect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  info_level <span class="op">=</span> <span class="fu"><a href="https://sizespectrum.org/mizer/reference/default_info_level.html" class="external-link">default_info_level</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -107,15 +108,22 @@ temperature in each realm.</p></dd>
 
 
 <dt id="arg-aerobic-effect">aerobic_effect<a class="anchor" aria-label="anchor" href="#arg-aerobic-effect"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, replace mizer's default
-encounter and predation-rate functions with therMizer's temperature-scaled
-versions. Default is <code>TRUE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, activate therMizer's
+temperature scaling for encounter and predation-rate calculations. Default
+is <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-metabolism-effect">metabolism_effect<a class="anchor" aria-label="anchor" href="#arg-metabolism-effect"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, replace mizer's default
-energy-for-growth-and-reproduction function with therMizer's
-temperature-scaled version. Default is <code>TRUE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, activate therMizer's
+temperature scaling for maintenance metabolism in the
+energy-for-growth-and-reproduction calculation. Default is <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg-info-level">info_level<a class="anchor" aria-label="anchor" href="#arg-info-level"></a></dt>
+<dd><p>Integer controlling how much therMizer reports about the
+choices it made on your behalf, in the same way as mizer's own setup
+functions. Use <code>0</code> for silence. Default is
+<code><a href="https://sizespectrum.org/mizer/reference/default_info_level.html" class="external-link">default_info_level()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -124,7 +132,12 @@ temperature-scaled version. Default is <code>TRUE</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If <code>vertical_migration_array</code> is omitted, a default realm
+    <p>Because therMizer scales the encounter rate with temperature, the
+  current value of the calculated species parameter <code>gamma</code> is declared
+  as a given species parameter, so that mizer does not later recalculate it
+  from an encounter rate that already carries the temperature scalar. Set
+  <code>given_species_params(params)$gamma &lt;- NA</code> to hand it back to mizer.</p>
+<p>If <code>vertical_migration_array</code> is omitted, a default realm
   allocation is constructed from the available temperature data. If
   <code>n_pp_array</code> is supplied, the resource dynamics function is set to
   <code><a href="plankton_forcing.html">plankton_forcing()</a></code>. The returned object also stores a time
@@ -148,8 +161,6 @@ temperature-scaled version. Default is <code>TRUE</code>.</p></dd>
 <span class="r-in"><span>               k_vb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.2</span><span class="op">)</span>, w_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>               beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span>, sigma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    no_w <span class="op">=</span> <span class="fl">16</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Minimal usage: constant temperature, one realm per species</span></span></span>
 <span class="r-in"><span><span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span></span></span>
@@ -191,7 +202,7 @@ temperature-scaled version. Default is <code>TRUE</code>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

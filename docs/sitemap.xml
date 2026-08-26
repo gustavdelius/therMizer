@@ -1,5 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
+<url><loc>/AGENTS.html</loc></url>
+<url><loc>/CLAUDE.html</loc></url>
+<url><loc>/GEMINI.html</loc></url>
+<url><loc>/MIZER-AGENTS.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
@@ -10,10 +14,8 @@
 <url><loc>/reference/setEncounterPredScale.html</loc></url>
 <url><loc>/reference/setMetabTher.html</loc></url>
 <url><loc>/reference/setVerticality.html</loc></url>
+<url><loc>/reference/therMizer-class.html</loc></url>
 <url><loc>/reference/therMizer-package.html</loc></url>
-<url><loc>/reference/therMizerEReproAndGrowth.html</loc></url>
-<url><loc>/reference/therMizerEncounter.html</loc></url>
-<url><loc>/reference/therMizerPredRate.html</loc></url>
 <url><loc>/reference/upgradeTherParams.html</loc></url>
 </urlset>
 

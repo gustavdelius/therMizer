@@ -35,5 +35,5 @@ Collate:
   plots.R
   therMizer-package.R
   zzz.R
-URL: https://github.com/sizespectrum/therMizer
+URL: https://github.com/sizespectrum/therMizer, https://sizespectrum.org/therMizer/
 Config/roxygen2/version: 8.1.0

@@ -24,8 +24,8 @@ plankton_forcing(params, t, ...)
 
 - ...:
 
-  Additional arguments passed through by mizer's internal rate function
-  machinery.
+  Unused. Present for compatibility with mizer's resource dynamics
+  interface.
 
 ## Value
 
