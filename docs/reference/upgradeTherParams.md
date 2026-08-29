@@ -89,12 +89,6 @@ The modified `params` object, ready to use with therMizer.
 
 ## Details
 
-Because therMizer scales the encounter rate with temperature, the
-current value of the calculated species parameter `gamma` is declared as
-a given species parameter, so that mizer does not later recalculate it
-from an encounter rate that already carries the temperature scalar. Set
-`given_species_params(params)$gamma <- NA` to hand it back to mizer.
-
 If `vertical_migration_array` is omitted, a default realm allocation is
 constructed from the available temperature data. If `n_pp_array` is
 supplied, the resource dynamics function is set to

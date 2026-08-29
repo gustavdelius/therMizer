@@ -17,8 +17,8 @@ Encoding: UTF-8
 License: GPL-3
 LazyData: true
 Depends:
-    R (>= 3.1),
-    mizer (>= 3.3.0)
+    R (>= 3.5.0),
+    mizer (>= 3.3.0.9000)
 Imports:
     ggplot2,
     reshape2,
@@ -34,6 +34,6 @@ Collate:
   therParams.R
   plots.R
   therMizer-package.R
-  zzz.R
+  upgrade.R
 URL: https://github.com/sizespectrum/therMizer, https://sizespectrum.org/therMizer/
 Config/roxygen2/version: 8.1.0

@@ -3,6 +3,7 @@
 S3method(projectEReproAndGrowth,therMizer)
 S3method(projectEncounter,therMizer)
 S3method(projectPredRate,therMizer)
+S3method(utils::upgrade,therMizer)
 export(plankton_forcing)
 export(plotTherPerformance)
 export(plotTherScalar)

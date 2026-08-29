@@ -1,11 +1,8 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://sizespectrum.org/therMizer/404.html</loc></url>
-<url><loc>https://sizespectrum.org/therMizer/AGENTS.html</loc></url>
-<url><loc>https://sizespectrum.org/therMizer/CLAUDE.html</loc></url>
-<url><loc>https://sizespectrum.org/therMizer/GEMINI.html</loc></url>
-<url><loc>https://sizespectrum.org/therMizer/MIZER-AGENTS.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/authors.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/index.html</loc></url>
+<url><loc>https://sizespectrum.org/therMizer/news/index.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/index.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/plankton_forcing.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/plotTherPerformance.html</loc></url>
@@ -16,6 +13,7 @@
 <url><loc>https://sizespectrum.org/therMizer/reference/setVerticality.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/therMizer-class.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/therMizer-package.html</loc></url>
+<url><loc>https://sizespectrum.org/therMizer/reference/upgrade.therMizer.html</loc></url>
 <url><loc>https://sizespectrum.org/therMizer/reference/upgradeTherParams.html</loc></url>
 </urlset>
 

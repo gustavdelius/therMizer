@@ -11,7 +11,6 @@ therMizer package also allows you to use a dynamic resource spectrum.
 The `remotes` package is needed to install packages hosted on GitHub.
 
 ``` r
-
 install.packages("remotes")
 
 remotes::install_github("sizespectrum/therMizer")
@@ -20,7 +19,6 @@ remotes::install_github("sizespectrum/therMizer")
 Finally, load the newly installed package with
 
 ``` r
-
 library(therMizer)
 ```
 
@@ -107,16 +105,16 @@ one vector of temperature is supplied, there will be only one realm.
 
 `vertical_migration` simulates the proportion of time that a given size
 of a given species spends in a given realm. It has the dimensions of
-`realm` $`\times`$`sp` $`\times`$`w`. Values can range from 0 to 1, and
-must sum to 1 across all realms for each species and size. If values sum
-to something other than one, it means that either a portion of time is
+`realm` $\times$`sp` $\times$`w`. Values can range from 0 to 1, and must
+sum to 1 across all realms for each species and size. If values sum to
+something other than one, it means that either a portion of time is
 unaccounted for (\<1) or that time across realms is over-allocated
 (\>1). Either way, you’ll be modeling something that cannot be
 replicated in the real ocean. By default, species are assumed to spend
 equal time across all realms.
 
 `exposure` links `vertical_migration` to `ocean_temp`. It has the
-dimensions of `realm` $`\times`$`sp`. The values are 1 for the realms to
+dimensions of `realm` $\times$`sp`. The values are 1 for the realms to
 which a species is exposed and 0 elsewhere. In theory, you could set all
 values to 1 and, so long as `vertical_migration` is constructed
 correctly, get the same results (because when multiplied by `exposure`
@@ -144,14 +142,14 @@ when `metabolism_effect = TRUE`.
 each `realm`. It can be a vector, if temperature is constant over time,
 or an array for dynamic temperatures. If you’re using time-varying
 temperature, the array will have the dimensions of `time`
-$`\times`$`realm`.
+$\times$`realm`.
 
 `n_pp` is an array that has numerical plankton abundance for each size
 class. therMizer will convert these abundances to densities for use
 within mizer. `n_pp` can be a vector, if these abundances are constant
 over time, or an array for a dynamic resource. If you’re using
 time-varying plankton, the array will have the dimensions of `time`
-$`\times`$`w`.
+$\times$`w`.
 
 ## Sample code for preparing parameters and input
 
@@ -163,7 +161,6 @@ vectors `temp_min` and `temp_max` and finally the temperature array.
 Let’s create some example species parameters for two fictional species:
 
 ``` r
-
 species_params = data.frame(species = c("speciesA", "speciesB"), w_inf = c(500, 5000), k_vb = c(0.8, 0.3), w_min = c(0.001, 0.001), w_mat = c(5, 50), beta = c(1000,100), sigma = c(3,3))
 species_params$interaction_resource <- c(1,0.5)
 params <- newMultispeciesParams(species_params, no_w = 200, kappa = 0.0001) |> 
@@ -182,7 +179,6 @@ moves to the bottom at maturity and that all sizes of the other species
 undergo diel vertical migration (DVM). This will give us four realms.
 
 ``` r
-
 realm_names <- c("upper50m","bottom","DVM_day","DVM_night")
 species_names <- as.character(params@species_params$species)
 sizes <- params@w
@@ -213,7 +209,6 @@ Using the same scenario, here’s an example to set up the `exposure`
 array.
 
 ``` r
-
 exposure_array <- array(0, dim = (c(length(realm_names), length(species_names))), 
                   dimnames = list(realm = realm_names, sp = species_names)) # realm x species
 
@@ -229,7 +224,6 @@ for (r in seq(1,length(realm_names),1)) {
 An example for creating the temperatures for each realm.
 
 ``` r
-
 # Create temperature array and fill it
 times <- 0:500
 ocean_temp_array <- array(NA, dim = c(length(times), length(realm_names)), 
@@ -244,7 +238,6 @@ for (i in 1:501) {
 An example for creating a dynamic resource spectra.
 
 ``` r
-
 x <- params@w_full
 slope <- -1
 intercept <- -5
@@ -305,7 +298,6 @@ parameters** (besides the `MizerParams` object) are `temp_min`,
   metabolism respectively.
 
 ``` r
-
 params <- upgradeTherParams(params = params, 
                             temp_min = temp_min,
                             temp_max = temp_max,
@@ -344,7 +336,6 @@ Below is an example to use the `project` function with therMizer:
 
 ``` r
 
-
 sim <- project(params, 
                # First date in ocean_temp_array
                t_start = as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1]),
@@ -358,7 +349,6 @@ The `plotThermPerformance` function displays the shape of the thermal
 performance curves for each species.
 
 ``` r
-
 
 plotThermPerformance(params)
 ```

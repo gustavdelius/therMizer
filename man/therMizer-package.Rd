@@ -15,6 +15,7 @@ of temperature on organisms.
 Useful links:
 \itemize{
   \item \url{https://github.com/sizespectrum/therMizer}
+  \item \url{https://sizespectrum.org/therMizer/}
 }
 
 }

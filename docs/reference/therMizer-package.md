@@ -10,6 +10,8 @@ Useful links:
 
 - <https://github.com/sizespectrum/therMizer>
 
+- <https://sizespectrum.org/therMizer/>
+
 ## Author
 
 **Maintainer**: Romain Forestier <romain.forestier@utas.edu.au>

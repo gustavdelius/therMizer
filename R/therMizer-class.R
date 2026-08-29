@@ -1,11 +1,19 @@
-#' therMizer marker classes
+#' therMizer extension classes
 #'
-#' S4 marker subclasses of `MizerParams` and `MizerSim` that enable the S3
-#' dispatch used by the `projectEncounter()`, `projectPredRate()` and
-#' `projectEReproAndGrowth()` methods defined in this package. They add no
-#' slots and are created by mizer when the package is loaded, not by a
-#' `setClass()` call here, so that therMizer can be chained with other mizer
-#' extension packages in either load order.
+#' S3 extension classes for [MizerParams] and [MizerSim] that enable S3 dispatch
+#' for extension-specific methods.
+#'
+#' The class names are ordinary entries in the object's S3 class vector. All
+#' extension-specific data lives in `other_params(params)` or in component
+#' parameters.
+#'
+#' Objects of class `therMizer` are created by [upgradeTherParams()].
+#' Objects of class `therMizerSim` are returned automatically by [project()]
+#' when called on a `therMizer` params object.
+#'
+#' No class declaration is needed. [upgradeTherParams()] records the
+#' extension on the object with [mizer::recordExtension()] and then calls
+#' [mizer::coerceToExtensionClass()].
 #'
 #' @name therMizer-class
 #' @keywords internal
