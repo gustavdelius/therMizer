@@ -26,19 +26,25 @@
 #' @export
 #'
 setEncounterPredScale <- function(params){
-  species_params(params)$encounterpred_scale <- rep(NA, length(species_params(params)$temp_min))
-  for (indv in seq(1:length(species_params(params)$temp_min))) {
+  temp_min <- species_params(params)$temp_min
+  temp_max <- species_params(params)$temp_max
+
+  encounterpred_scale <- vapply(seq_along(temp_min), function(indv) {
 
     # Create a vector of all temperatures each species might encounter
     # Convert from degrees Celsius to Kelvin
-    temperature <- seq(species_params(params)$temp_min[indv], species_params(params)$temp_max[indv], by = 0.1) + 273
+    temperature <- seq(temp_min[indv], temp_max[indv], by = 0.1) + 273
 
     # Find the maximum value of the unscaled effect of temperature on encounter and predation rate for each species
-    species_params(params)$encounterpred_scale[indv] <-
-      max((temperature) * (temperature - (species_params(params)$temp_min[indv] + 273)) *
-            ((species_params(params)$temp_max[indv] + 273) - temperature)^(1/2))
+    max((temperature) * (temperature - (temp_min[indv] + 273)) *
+          ((temp_max[indv] + 273) - temperature)^(1/2))
 
-  }
+  }, numeric(1))
+
+  # A single assignment, so that the species parameters are validated once
+  # rather than once per species
+  species_params(params)$encounterpred_scale <- encounterpred_scale
+
   return(params)
 }
 

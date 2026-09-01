@@ -14,7 +14,8 @@ plankton_forcing(params, t, ...)
 - params:
 
   A `MizerParams` object that has been prepared for therMizer, typically
-  with [`upgradeTherParams()`](upgradeTherParams.md).
+  with
+  [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md).
 
 - t:
 
@@ -24,8 +25,8 @@ plankton_forcing(params, t, ...)
 
 - ...:
 
-  Additional arguments passed through by mizer's internal rate function
-  machinery.
+  Unused. Present for compatibility with mizer's resource dynamics
+  interface.
 
 ## Value
 

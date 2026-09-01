@@ -16,7 +16,8 @@ upgradeTherParams(
   vertical_migration_array = NULL,
   exposure_array = NULL,
   aerobic_effect = TRUE,
-  metabolism_effect = TRUE
+  metabolism_effect = TRUE,
+  info_level = default_info_level()
 )
 ```
 
@@ -48,7 +49,8 @@ upgradeTherParams(
   Optional vector, matrix, or array of plankton forcing with dimensions
   time x size. The time dimension must match `ocean_temp_array`, and the
   size dimension must match `params@w_full`. Values are interpreted on
-  the log10 scale used by [`plankton_forcing()`](plankton_forcing.md).
+  the log10 scale used by
+  [`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
 
 - vertical_migration_array:
 
@@ -65,15 +67,21 @@ upgradeTherParams(
 
 - aerobic_effect:
 
-  Logical. If `TRUE`, replace mizer's default encounter and
-  predation-rate functions with therMizer's temperature-scaled versions.
-  Default is `TRUE`.
+  Logical. If `TRUE`, activate therMizer's temperature scaling for
+  encounter and predation-rate calculations. Default is `TRUE`.
 
 - metabolism_effect:
 
-  Logical. If `TRUE`, replace mizer's default
-  energy-for-growth-and-reproduction function with therMizer's
-  temperature-scaled version. Default is `TRUE`.
+  Logical. If `TRUE`, activate therMizer's temperature scaling for
+  maintenance metabolism in the energy-for-growth-and-reproduction
+  calculation. Default is `TRUE`.
+
+- info_level:
+
+  Integer controlling how much therMizer reports about the choices it
+  made on your behalf, in the same way as mizer's own setup functions.
+  Use `0` for silence. Default is
+  [`default_info_level()`](https://sizespectrum.org/mizer/reference/default_info_level.html).
 
 ## Value
 
@@ -84,16 +92,18 @@ The modified `params` object, ready to use with therMizer.
 If `vertical_migration_array` is omitted, a default realm allocation is
 constructed from the available temperature data. If `n_pp_array` is
 supplied, the resource dynamics function is set to
-[`plankton_forcing()`](plankton_forcing.md). The returned object also
-stores a time offset in `other_params(params)$t_idx` so therMizer can
-align mizer's simulation time with the supplied forcing series.
+[`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
+The returned object also stores a time offset in
+`other_params(params)$t_idx` so therMizer can align mizer's simulation
+time with the supplied forcing series.
 
 ## See also
 
-[`setVerticality()`](setVerticality.md),
-[`setEncounterPredScale()`](setEncounterPredScale.md),
-[`setMetabTher()`](setMetabTher.md), and
-[`plankton_forcing()`](plankton_forcing.md).
+[`setVerticality()`](https://sizespectrum.org/therMizer/reference/setVerticality.md),
+[`setEncounterPredScale()`](https://sizespectrum.org/therMizer/reference/setEncounterPredScale.md),
+[`setMetabTher()`](https://sizespectrum.org/therMizer/reference/setMetabTher.md),
+and
+[`plankton_forcing()`](https://sizespectrum.org/therMizer/reference/plankton_forcing.md).
 
 ## Examples
 
@@ -105,8 +115,6 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 
 # Minimal usage: constant temperature, one realm per species
 params <- suppressWarnings(suppressMessages(

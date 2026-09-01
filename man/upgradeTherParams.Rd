@@ -13,7 +13,8 @@ upgradeTherParams(
   vertical_migration_array = NULL,
   exposure_array = NULL,
   aerobic_effect = TRUE,
-  metabolism_effect = TRUE
+  metabolism_effect = TRUE,
+  info_level = default_info_level()
 )
 }
 \arguments{
@@ -48,13 +49,18 @@ realms for every species-size combination.}
 values between 0 and 1 describing how strongly each species is exposed to
 temperature in each realm.}
 
-\item{aerobic_effect}{Logical. If \code{TRUE}, replace mizer's default
-encounter and predation-rate functions with therMizer's temperature-scaled
-versions. Default is \code{TRUE}.}
+\item{aerobic_effect}{Logical. If \code{TRUE}, activate therMizer's
+temperature scaling for encounter and predation-rate calculations. Default
+is \code{TRUE}.}
 
-\item{metabolism_effect}{Logical. If \code{TRUE}, replace mizer's default
-energy-for-growth-and-reproduction function with therMizer's
-temperature-scaled version. Default is \code{TRUE}.}
+\item{metabolism_effect}{Logical. If \code{TRUE}, activate therMizer's
+temperature scaling for maintenance metabolism in the
+energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.}
+
+\item{info_level}{Integer controlling how much therMizer reports about the
+choices it made on your behalf, in the same way as mizer's own setup
+functions. Use \code{0} for silence. Default is
+\code{\link[mizer]{default_info_level}()}.}
 }
 \value{
 The modified \code{params} object, ready to use with therMizer.

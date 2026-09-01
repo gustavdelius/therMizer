@@ -1,7 +1,7 @@
 Package: therMizer
 Type: Package
 Title: therMizer: Temperature-Dependent Rates in Mizer
-Version: 1.0.0
+Version: 1.1.0
 Description: A set of functions that allows users to incorporate
     temperature-dependent rates in mizer.
 Maintainer: Romain Forestier <romain.forestier@utas.edu.au>
@@ -17,20 +17,23 @@ Encoding: UTF-8
 License: GPL-3
 LazyData: true
 Depends:
-    R (>= 3.1),
-    mizer (>= 2.3.0)
+    R (>= 3.5.0),
+    mizer (>= 3.3.0.9000)
 Imports:
     ggplot2,
-    reshape2
+    reshape2,
+    utils
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Collate:
+  therMizer-class.R
   rates.R
   realms.R
   scale_temp_effect.R
   therParams.R
   plots.R
   therMizer-package.R
-RoxygenNote: 7.3.3
-URL: https://github.com/sizespectrum/therMizer
+  upgrade.R
+URL: https://github.com/sizespectrum/therMizer, https://sizespectrum.org/therMizer/
+Config/roxygen2/version: 8.1.0

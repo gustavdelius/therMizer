@@ -4,7 +4,12 @@
 \alias{setVerticality}
 \title{Add realm-specific temperature structure to a therMizer model}
 \usage{
-setVerticality(params, vertical_migration_array, exposure_array = NULL)
+setVerticality(
+  params,
+  vertical_migration_array,
+  exposure_array = NULL,
+  info_level = default_info_level()
+)
 }
 \arguments{
 \item{params}{A \code{MizerParams} object to augment.}
@@ -17,6 +22,11 @@ realms for every species-size combination.}
 \item{exposure_array}{Optional array of dimensions realm x species with
 values between 0 and 1 describing how strongly each species is exposed to
 temperature in each realm.}
+
+\item{info_level}{Integer controlling how much therMizer reports about the
+choices it made on your behalf, in the same way as mizer's own setup
+functions. Use \code{0} for silence. Default is
+\code{\link[mizer]{default_info_level}()}.}
 }
 \value{
 The modified \code{params} object with

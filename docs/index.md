@@ -105,16 +105,16 @@ one vector of temperature is supplied, there will be only one realm.
 
 `vertical_migration` simulates the proportion of time that a given size
 of a given species spends in a given realm. It has the dimensions of
-`realm` $`\times`$`sp` $`\times`$`w`. Values can range from 0 to 1, and
-must sum to 1 across all realms for each species and size. If values sum
-to something other than one, it means that either a portion of time is
+`realm` $\times$`sp` $\times$`w`. Values can range from 0 to 1, and must
+sum to 1 across all realms for each species and size. If values sum to
+something other than one, it means that either a portion of time is
 unaccounted for (\<1) or that time across realms is over-allocated
 (\>1). Either way, you’ll be modeling something that cannot be
 replicated in the real ocean. By default, species are assumed to spend
 equal time across all realms.
 
 `exposure` links `vertical_migration` to `ocean_temp`. It has the
-dimensions of `realm` $`\times`$`sp`. The values are 1 for the realms to
+dimensions of `realm` $\times$`sp`. The values are 1 for the realms to
 which a species is exposed and 0 elsewhere. In theory, you could set all
 values to 1 and, so long as `vertical_migration` is constructed
 correctly, get the same results (because when multiplied by `exposure`
@@ -126,23 +126,15 @@ to 1 for all realms and species and therefore has no effects.
 
 ### Temperature functions
 
-Temperature affects species within mizer by overwriting mizer’s default
-rate functions and replacing them with custom functions using the new
-set of parameters. Two new functions `therMizerEncounter` and
-`therMizerPredRate` affect the encounter and predation rates and one
-function `therMizerEReproAndGrowth` takes care of the maintenance
-metabolism. These functions can be disabled by setting the arguments
-`aerobic_effect` and `metabolism_effect` to `FALSE` for encounter and
-predation rates and for metabolism, respectively.
-
-These functions can also be overridden by the user using
-[`setRateFunction()`](https://sizespectrum.org/mizer/reference/setRateFunction.html).
-Example below:
-
-``` r
-
-params <- setRateFunction(params,"Encounter","newEncounterFunction")
-```
+Temperature affects species within mizer through mizer’s extension
+chain. Calling
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md)
+records therMizer in `params@extensions` and activates projection hooks
+that can compose with hooks from other extension packages. The encounter
+and predation-rate calculations are temperature-scaled when
+`aerobic_effect = TRUE`; maintenance metabolism in the
+energy-for-growth-and-reproduction calculation is temperature-scaled
+when `metabolism_effect = TRUE`.
 
 ### Input
 
@@ -150,14 +142,14 @@ params <- setRateFunction(params,"Encounter","newEncounterFunction")
 each `realm`. It can be a vector, if temperature is constant over time,
 or an array for dynamic temperatures. If you’re using time-varying
 temperature, the array will have the dimensions of `time`
-$`\times`$`realm`.
+$\times$`realm`.
 
 `n_pp` is an array that has numerical plankton abundance for each size
 class. therMizer will convert these abundances to densities for use
 within mizer. `n_pp` can be a vector, if these abundances are constant
 over time, or an array for a dynamic resource. If you’re using
 time-varying plankton, the array will have the dimensions of `time`
-$`\times`$`w`.
+$\times$`w`.
 
 ## Sample code for preparing parameters and input
 

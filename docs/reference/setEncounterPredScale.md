@@ -16,7 +16,8 @@ setEncounterPredScale(params)
 - params:
 
   A `MizerParams` object that has been prepared for therMizer, typically
-  with [`upgradeTherParams()`](upgradeTherParams.md).
+  with
+  [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md).
 
 ## Value
 
@@ -32,11 +33,10 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 species_params(params)$temp_min <- c(-2, 5)
 species_params(params)$temp_max <- c(12, 18)
 params <- setEncounterPredScale(params)
 species_params(params)$encounterpred_scale
-#> [1] 5653.075 5172.333
+#>      sp1      sp2 
+#> 5653.075 5172.333 
 ```

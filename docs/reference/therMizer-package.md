@@ -10,12 +10,16 @@ Useful links:
 
 - <https://github.com/sizespectrum/therMizer>
 
+- <https://sizespectrum.org/therMizer/>
+
 ## Author
 
 **Maintainer**: Romain Forestier <romain.forestier@utas.edu.au>
 \[copyright holder\]
 
 Authors:
+
+- Romain Forestier <romain.forestier@utas.edu.au> \[copyright holder\]
 
 - Phoebe Woodworth-Jefcoats <phoebe.woodworth-jefcoats@noaa.gov>
   ([ORCID](https://orcid.org/0000-0001-9353-923X)) \[copyright holder\]

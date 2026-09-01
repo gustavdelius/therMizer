@@ -6,7 +6,12 @@ object so temperature effects can be combined across multiple realms.
 ## Usage
 
 ``` r
-setVerticality(params, vertical_migration_array, exposure_array = NULL)
+setVerticality(
+  params,
+  vertical_migration_array,
+  exposure_array = NULL,
+  info_level = default_info_level()
+)
 ```
 
 ## Arguments
@@ -27,6 +32,13 @@ setVerticality(params, vertical_migration_array, exposure_array = NULL)
   Optional array of dimensions realm x species with values between 0 and
   1 describing how strongly each species is exposed to temperature in
   each realm.
+
+- info_level:
+
+  Integer controlling how much therMizer reports about the choices it
+  made on your behalf, in the same way as mizer's own setup functions.
+  Use `0` for silence. Default is
+  [`default_info_level()`](https://sizespectrum.org/mizer/reference/default_info_level.html).
 
 ## Value
 
@@ -51,8 +63,6 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 species_params(params)$temp_min <- c(-2, 5)
 species_params(params)$temp_max <- c(12, 18)
 

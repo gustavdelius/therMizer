@@ -7,8 +7,8 @@
 #' of temperature on organisms.
 #'
 #' @import ggplot2 mizer
-#' @importFrom stats mvfft
 #' @importFrom reshape2 melt
+#' @importFrom utils packageVersion
 #' @md
 #' @keywords internal
 "_PACKAGE"

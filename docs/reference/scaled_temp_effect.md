@@ -14,7 +14,8 @@ scaled_temp_effect(params, t)
 - params:
 
   A `MizerParams` object that has been prepared for therMizer, typically
-  with [`upgradeTherParams()`](upgradeTherParams.md).
+  with
+  [`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md).
 
 - t:
 
@@ -34,9 +35,10 @@ across realms. Values are set to 0 outside each species' thermal limits.
 
 ## See also
 
-[`upgradeTherParams()`](upgradeTherParams.md),
-[`setEncounterPredScale()`](setEncounterPredScale.md), and
-[`setVerticality()`](setVerticality.md).
+[`upgradeTherParams()`](https://sizespectrum.org/therMizer/reference/upgradeTherParams.md),
+[`setEncounterPredScale()`](https://sizespectrum.org/therMizer/reference/setEncounterPredScale.md),
+and
+[`setVerticality()`](https://sizespectrum.org/therMizer/reference/setVerticality.md).
 
 ## Examples
 
@@ -48,8 +50,6 @@ params <- suppressMessages(
                k_vb = c(0.3, 0.2), w_mat = c(10, 100),
                beta = c(100, 100), sigma = c(2, 2)),
     no_w = 16))
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
-#> Warning: The species parameter data frame is missing a `w_max` column. I am copying over the values from the `w_inf` column. But note that `w_max` should be the maximum size of the largest individual, not the asymptotic size of an average indivdidual.
 params <- suppressWarnings(suppressMessages(
   upgradeTherParams(params,
     temp_min = c(-2, 5), temp_max = c(12, 18),

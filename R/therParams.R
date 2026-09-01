@@ -62,13 +62,16 @@ decimal_year <- function(date_vec) {
 #' @param exposure_array Optional array of dimensions realm x species with
 #'   values between 0 and 1 describing how strongly each species is exposed to
 #'   temperature in each realm.
-#' @param aerobic_effect Logical. If \code{TRUE}, replace mizer's default
-#'   encounter and predation-rate functions with therMizer's temperature-scaled
-#'   versions. Default is \code{TRUE}.
-#' @param metabolism_effect Logical. If \code{TRUE}, replace mizer's default
-#'   energy-for-growth-and-reproduction function with therMizer's
-#'   temperature-scaled version. Default is \code{TRUE}.
-#'
+#' @param aerobic_effect Logical. If \code{TRUE}, activate therMizer's
+#'   temperature scaling for encounter and predation-rate calculations. Default
+#'   is \code{TRUE}.
+#' @param metabolism_effect Logical. If \code{TRUE}, activate therMizer's
+#'   temperature scaling for maintenance metabolism in the
+#'   energy-for-growth-and-reproduction calculation. Default is \code{TRUE}.
+#' @param info_level Integer controlling how much therMizer reports about the
+#'   choices it made on your behalf, in the same way as mizer's own setup
+#'   functions. Use \code{0} for silence. Default is
+#'   \code{\link[mizer]{default_info_level}()}.
 #' @details If \code{vertical_migration_array} is omitted, a default realm
 #'   allocation is constructed from the available temperature data. If
 #'   \code{n_pp_array} is supplied, the resource dynamics function is set to
@@ -129,8 +132,11 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
                               vertical_migration_array = NULL,
                               exposure_array = NULL,
                               aerobic_effect = TRUE,
-                              metabolism_effect = TRUE){
+                              metabolism_effect = TRUE,
+                              info_level = default_info_level()){
+ with_info_level(info_level = info_level, {
   no_sp <- length(species_params(params)$species)
+
 
   ## temperature parameters
   if(is.null(temp_min)){
@@ -156,7 +162,9 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
   if(is.vector(ocean_temp_array)){
     ## check dimnames
     if(is.null(names(ocean_temp_array))){
-      warning("ocean_temp_array has no dates. They are assumed to be successive years staring from 0.")
+      signal_info("ocean_temp_array",
+                  "`ocean_temp_array` has no dates. They are assumed to be successive years starting from 0.",
+                  level = 1, severity = "warning")
       names(ocean_temp_array) <- sprintf("%04d", seq(0, length.out = length(ocean_temp_array)))
     }
     date_vec <- names(ocean_temp_array)
@@ -190,9 +198,12 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
       stop("The size dimension of the n_pp_array must be the same as w_full.")
 
     if(!identical(dimnames(n_pp_array)[[2]],params@w_full)){
-      warning("The dimnames of the second dimension of n_pp_array are not the same
-      as the ones in w_full. Since the dimension size is the same, the dimnames
-      have been replaced by w_full.")
+      signal_info("n_pp_array",
+                  paste("The dimnames of the second dimension of `n_pp_array`",
+                        "are not the same as the ones in `w_full`. Since the",
+                        "dimension size is the same, the dimnames have been",
+                        "replaced by `w_full`."),
+                  level = 1, severity = "warning")
       dimnames(n_pp_array)[[2]] <- params@w_full
     }
 
@@ -222,7 +233,9 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
             dimnames = list("realm" = vertical_names,
                             "species" = params@species_params$species,
                             "w" = params@w))
-    message("exposure_array used to create vertical_migration_array.")
+    signal_info("vertical_migration_array",
+                "`exposure_array` used to create `vertical_migration_array`.",
+                level = 1)
     params <- setVerticality(params, vertical_migration_array, exposure_array)
   } else {
     if(is.null(dim(ocean_temp_array))){
@@ -230,14 +243,19 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
                                  length(params@species_params$species)-1),1),length(params@w))
       vertical_names <- params@species_params$species
       vertical_dim <- c(rep(length(params@species_params$species),2), length(params@w))
-      message("Assuming one realm per species to create vertical_migration_array.")
+      signal_info("vertical_migration_array",
+                  "Assuming one realm per species to create `vertical_migration_array`.",
+                  level = 1)
     } else if(!isTRUE(all.equal(dimnames(ocean_temp_array)[[2]],params@species_params$species))){
       vertical_fill <- 1/length(dimnames(ocean_temp_array)[[2]])
       vertical_names <- dimnames(ocean_temp_array)[[2]]
       vertical_dim <- c(dim(ocean_temp_array)[2],
                         length(params@species_params$species),
                         length(params@w))
-      message("Your realm names don't match your species names, so species are assumed to spend equal time in all realms.")
+      signal_info("vertical_migration_array",
+                  paste("Your realm names don't match your species names, so",
+                        "species are assumed to spend equal time in all realms."),
+                  level = 1)
     } else {
       vertical_fill <- rep(c(rep(c(1,rep(0,length(params@species_params$species))),
                                  length(params@species_params$species)-1),1),length(params@w))
@@ -254,34 +272,49 @@ upgradeTherParams <- function(params, temp_min = NULL, temp_max = NULL,
     params <- setVerticality(params, vertical_migration_array)
   }
 
-  ## rate functions
-  if(aerobic_effect){
-    params <- setRateFunction(params, "Encounter", "therMizerEncounter")
-    params <- setRateFunction(params, "PredRate", "therMizerPredRate")
-  }
-
-  if(metabolism_effect) params <- setRateFunction(params, "EReproAndGrowth", "therMizerEReproAndGrowth")
+  other_params(params)$therMizer <- list(
+    aerobic_effect = isTRUE(aerobic_effect),
+    metabolism_effect = isTRUE(metabolism_effect)
+  )
 
   ## time dimension
   other_params(params)$t_idx = - as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1])
 
+  # Record that therMizer has been applied to this object, stamping the
+  # installed package version the first time and preserving the existing stamp
+  # afterwards, then promote the object to its therMizer extension class so that
+  # the project* methods dispatch during projection.
+  extensions <- getMetadata(params)$extensions
+  version <- if ("therMizer" %in% names(extensions)) {
+    NULL
+  } else {
+    as.character(utils::packageVersion("therMizer"))
+  }
+  params <- mizer::recordExtension(
+    params, "therMizer",
+    version = version,
+    requirement = "sizespectrum/therMizer"
+  )
+  params <- mizer::coerceToExtensionClass(params)
+
   return(params)
+ })
 }
 
-#' #' @title Project thermizer object
-#' #'
-#' #' @description Wrapper function adjusting simulation time and start time
-#' #' for the project function
-#' #'
-#' #' @inheritParams upgradeTherParams
-#' #'
-#' #' @export
-#' #'
-#' therProject <- function(params){
-#'   sim_times <- c(as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1]),
-#'                  dim(other_params(params)$ocean_temp)[1])
-#'
-#'   cat(sprintf("The simulation is set to start in %d and will run for %d years.\n",sim_times[1], sim_times[2]))
-#'
-#'   sim <- project(params, t_start = sim_times[1], t_max = sim_times[2]-1)
-#' }
+# @title Project thermizer object
+#
+# @description Wrapper function adjusting simulation time and start time
+# for the project function
+#
+# @inheritParams upgradeTherParams
+#
+# @export
+#
+# therProject <- function(params){
+#   sim_times <- c(as.numeric(dimnames(other_params(params)$ocean_temp)[[1]][1]),
+#                  dim(other_params(params)$ocean_temp)[1])
+#
+#   cat(sprintf("The simulation is set to start in %d and will run for %d years.\n",sim_times[1], sim_times[2]))
+#
+#   sim <- project(params, t_start = sim_times[1], t_max = sim_times[2]-1)
+# }

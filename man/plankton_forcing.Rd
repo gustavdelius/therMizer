@@ -14,8 +14,8 @@ therMizer, typically with \code{\link{upgradeTherParams}()}.}
 \code{other_params(params)$ocean_temp}. If \code{t} falls outside the
 supplied time series, the temperature series is recycled cyclically.}
 
-\item{...}{Additional arguments passed through by mizer's internal rate
-function machinery.}
+\item{...}{Unused. Present for compatibility with mizer's resource dynamics
+interface.}
 }
 \value{
 A numeric vector of resource densities over \code{params@w_full}.

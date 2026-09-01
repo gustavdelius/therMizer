@@ -30,7 +30,17 @@ test_that("upgradeTherParams augments params and honours rate toggles", {
     )
   )
 
-  expect_s4_class(upgraded, "MizerParams")
+  expect_s3_class(upgraded, "MizerParams")
+  expect_s3_class(upgraded, "therMizer")
+  expect_true("therMizer" %in% names(mizer::getMetadata(upgraded)$extensions))
+  expect_equal(
+    mizer::getMetadata(upgraded)$extensions$therMizer[["requirement"]],
+    "sizespectrum/therMizer"
+  )
+  expect_equal(mizer::getMetadata(upgraded)$extensions$therMizer[["version"]],
+               as.character(utils::packageVersion("therMizer")))
+  expect_false(other_params(upgraded)$therMizer$aerobic_effect)
+  expect_false(other_params(upgraded)$therMizer$metabolism_effect)
   expect_true(all(c(
     "temp_min",
     "temp_max",
@@ -52,4 +62,49 @@ test_that("upgradeTherParams installs plankton forcing when n_pp_array is suppli
 
   expect_equal(params@resource_dynamics, "plankton_forcing")
   expect_equal(dim(other_params(params)$n_pp_array), c(3, length(params@w_full)))
+})
+
+test_that("info_level controls what upgradeTherParams reports", {
+  params <- make_base_params()
+  limits <- make_temp_limits()
+
+  args <- list(
+    params = params,
+    temp_min = limits$temp_min,
+    temp_max = limits$temp_max,
+    ocean_temp_array = c(3, 6, 9)
+  )
+
+  # Unnamed temperatures make therMizer invent dates, which it reports
+  expect_warning(suppressMessages(do.call(upgradeTherParams, args)),
+                 "assumed to be successive years")
+  expect_silent(do.call(upgradeTherParams, c(args, list(info_level = 0))))
+})
+
+test_that("upgradeTherParams does not contaminate gamma calculation with temperature scaling", {
+  base <- make_base_params()
+  limits <- make_temp_limits()
+  ocean_temp_array <- c("2000" = 5, "2001" = 6, "2002" = 7)
+
+  upgrade <- function(params) {
+    suppressWarnings(suppressMessages(
+      upgradeTherParams(params,
+                        temp_min = limits$temp_min,
+                        temp_max = limits$temp_max,
+                        ocean_temp_array = ocean_temp_array)))
+  }
+
+  once <- upgrade(base)
+  twice <- upgrade(once)
+
+  expect_equal(species_params(once)$gamma, species_params(base)$gamma)
+  expect_equal(species_params(twice)$gamma, species_params(base)$gamma)
+  expect_true(is.null(given_species_params(once)$gamma) ||
+              all(is.na(given_species_params(once)$gamma)))
+
+  # An ordinary species parameter change recalculates gamma cleanly without error
+  changed <- once
+  species_params(changed)$beta <- c(120, 120)
+  expect_true(all(is.finite(species_params(changed)$gamma)))
+  expect_true(all(species_params(changed)$gamma > 0))
 })
